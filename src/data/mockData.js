@@ -5,33 +5,36 @@
 // true  = card is enabled and clickable
 // false = card is disabled (grayed out, not clickable)
 //
-// Card keys: COMPANY_OVERVIEW, FUNDING_LENDING, LEAKAGE, PRODUCTS, INCOME, MEETING_PREP
+// Card keys: COMPANY_OVERVIEW, FUNDING_LENDING, LEAKAGE, PRODUCTS, INCOME, ECOSYSTEM, MEETING_PREP
 // Company keys: astra, kino, indofood
 // ═══════════════════════════════════════════════════════════════════════════
 export const CARD_CONFIG = {
   astra: {
     COMPANY_OVERVIEW: true,
-    FUNDING_LENDING: true,
-    LEAKAGE: true,
-    PRODUCTS: true,
-    INCOME: false,       // ← disabled: data still being prepared
-    MEETING_PREP: true,
+    FUNDING_LENDING:  true,
+    LEAKAGE:          true,
+    PRODUCTS:         true,
+    INCOME:           false,  // ← disabled: data still being prepared
+    ECOSYSTEM:        true,
+    MEETING_PREP:     true,
   },
   kino: {
     COMPANY_OVERVIEW: true,
-    FUNDING_LENDING: true,
-    LEAKAGE: true,
-    PRODUCTS: true,
-    INCOME: false,       // ← disabled: data still being prepared
-    MEETING_PREP: true,
+    FUNDING_LENDING:  true,
+    LEAKAGE:          true,
+    PRODUCTS:         true,
+    INCOME:           false,  // ← disabled: data still being prepared
+    ECOSYSTEM:        true,
+    MEETING_PREP:     true,
   },
   indofood: {
     COMPANY_OVERVIEW: true,
-    FUNDING_LENDING: true,
-    LEAKAGE: true,
-    PRODUCTS: false,     // ← disabled: product holding data not yet ready
-    INCOME: false,       // ← disabled: data still being prepared
-    MEETING_PREP: true,
+    FUNDING_LENDING:  true,
+    LEAKAGE:          true,
+    PRODUCTS:         false,  // ← disabled: product holding data not yet ready
+    INCOME:           false,  // ← disabled: data still being prepared
+    ECOSYSTEM:        true,
+    MEETING_PREP:     true,
   },
 };
 
@@ -334,7 +337,7 @@ export const kinoData = {
     },
   ],
   meetingPrep: {
-    snapshot: { industry: 'Consumer Goods — Personal Care & Food', group: 'Kino Group', segment: 'Corporate Banking', rm: 'Sari Puspita', lastMeeting: '3 Oct 2024' },
+    snapshot: { industry: 'Consumer Goods — Personal Care & Food', group: 'Kino Group', segment: 'Commercial Banking', rm: 'Sari Puspita', lastMeeting: '3 Oct 2024' },
     keyMetrics: [
       { label: 'CASA Balance', value: '+11.4% YoY', trend: 'up' },
       { label: 'Loan OS', value: '+4.2% YoY', trend: 'up' },
@@ -516,6 +519,166 @@ export const indofoodData = {
       'Explore Supply Chain Finance for seasonal procurement (wheat, palm oil suppliers).',
       'Offer FX hedging calendar for upcoming commodity purchase cycle.',
     ],
+  },
+};
+
+// ═══════════════════════════════════════════════════════════════════════════
+// ECOSYSTEM DATA
+// ─────────────────────────────────────────────────────────────────────────
+// ⚠️  EcoWeb redirect URL — change this when EcoWeb goes live
+// Find this constant and replace the placeholder with the real URL.
+// ═══════════════════════════════════════════════════════════════════════════
+export const ECOWEB_URL = 'https://ecoweb.cimbniaga.co.id';
+
+export const ecosystemData = {
+  astra: {
+    ecosystemType: 'Fast-Moving Consumer Goods (FMCG)',
+    anchor: 'PT Astra Internasional Tbk',
+    summary: {
+      totalMembers: 1245,
+      etbMembers: 430,
+      ntbMembers: 815,
+      casaBalance: 185,      // IDR Bn
+      transactionVolume: 2400, // IDR Bn
+    },
+    layers: [
+      { layer: 'L0', desc: 'Selected anchor / principal customer',     total: 1,   etb: 1,   ntb: 0,   casa: 45,   trxVol: 320 },
+      { layer: 'L1', desc: 'Direct counterparties of anchor',          total: 120, etb: 55,  ntb: 65,  casa: 90,   trxVol: 1100 },
+      { layer: 'L2', desc: 'Counterparties connected through L1',      total: 420, etb: 150, ntb: 270, casa: 65,   trxVol: 850 },
+      { layer: 'L3', desc: 'Extended ecosystem connected through L2',  total: 705, etb: 225, ntb: 480, casa: 30,   trxVol: 450 },
+    ],
+    top10Collection: {
+      etb: [
+        { rank: 1, name: 'PT Unilever Indonesia Tbk',    banks: [{ bank: 'Bank Mandiri', amount: 4200, pct: 52 }, { bank: 'Bank BCA', amount: 2400, pct: 30 }, { bank: 'CIMB Niaga', amount: 1456, pct: 18 }] },
+        { rank: 2, name: 'PT Carrefour Indonesia',       banks: [{ bank: 'Bank BCA', amount: 3100, pct: 48 }, { bank: 'Bank BNI', amount: 2100, pct: 32 }, { bank: 'CIMB Niaga', amount: 1300, pct: 20 }] },
+        { rank: 3, name: 'PT Alfamart Pratama',          banks: [{ bank: 'CIMB Niaga', amount: 2800, pct: 55 }, { bank: 'Bank Mandiri', amount: 1400, pct: 27 }, { bank: 'Bank BRI', amount: 920, pct: 18 }] },
+        { rank: 4, name: 'PT Indofood Sukses Makmur Tbk', banks: [{ bank: 'CIMB Niaga', amount: 2200, pct: 42 }, { bank: 'Bank Mandiri', amount: 1800, pct: 34 }, { bank: 'Bank BNI', amount: 1250, pct: 24 }] },
+        { rank: 5, name: 'PT Mayora Indah Tbk',          banks: [{ bank: 'Bank BCA', amount: 1900, pct: 44 }, { bank: 'Bank Mandiri', amount: 1400, pct: 32 }, { bank: 'CIMB Niaga', amount: 1030, pct: 24 }] },
+      ],
+      ntb: [
+        { rank: 6,  name: 'PT Wings Food Indonesia',    banks: [{ bank: 'Bank BCA', amount: 2600, pct: 58 }, { bank: 'Bank Mandiri', amount: 1200, pct: 27 }, { bank: 'Bank BNI', amount: 680, pct: 15 }] },
+        { rank: 7,  name: 'PT Garudafood Putra Putri',  banks: [{ bank: 'Bank Mandiri', amount: 1800, pct: 50 }, { bank: 'Bank BRI', amount: 900, pct: 25 }, { bank: 'Bank BNI', amount: 900, pct: 25 }] },
+        { rank: 8,  name: 'PT Siantar Top Tbk',         banks: [{ bank: 'Bank BCA', amount: 1400, pct: 55 }, { bank: 'Bank BNI', amount: 700, pct: 27 }, { bank: 'Bank Mandiri', amount: 468, pct: 18 }] },
+        { rank: 9,  name: 'PT Nippon Indosari Tbk',     banks: [{ bank: 'Bank Mandiri', amount: 1200, pct: 46 }, { bank: 'Bank BCA', amount: 800, pct: 31 }, { bank: 'Bank BNI', amount: 600, pct: 23 }] },
+        { rank: 10, name: 'PT Ultrajaya Milk Tbk',      banks: [{ bank: 'Bank BRI', amount: 1100, pct: 48 }, { bank: 'Bank BCA', amount: 700, pct: 31 }, { bank: 'Bank Mandiri', amount: 490, pct: 21 }] },
+      ],
+    },
+    top10Payment: {
+      etb: [
+        { rank: 1, name: 'PT Nestle Indonesia',          banks: [{ bank: 'Bank BCA', amount: 3800, pct: 56 }, { bank: 'Bank Mandiri', amount: 1900, pct: 28 }, { bank: 'CIMB Niaga', amount: 1100, pct: 16 }] },
+        { rank: 2, name: 'PT P&G Indonesia',             banks: [{ bank: 'Bank BNI', amount: 2400, pct: 52 }, { bank: 'Bank BCA', amount: 1400, pct: 30 }, { bank: 'CIMB Niaga', amount: 830, pct: 18 }] },
+        { rank: 3, name: 'PT Kimia Farma Tbk',           banks: [{ bank: 'CIMB Niaga', amount: 1800, pct: 45 }, { bank: 'Bank Mandiri', amount: 1200, pct: 30 }, { bank: 'Bank BCA', amount: 1000, pct: 25 }] },
+        { rank: 4, name: 'PT Kalbe Farma Tbk',           banks: [{ bank: 'Bank BCA', amount: 1600, pct: 42 }, { bank: 'Bank BNI', amount: 1200, pct: 31 }, { bank: 'CIMB Niaga', amount: 1040, pct: 27 }] },
+        { rank: 5, name: 'PT Indofood CBP Sukses Makmur', banks: [{ bank: 'Bank Mandiri', amount: 2100, pct: 48 }, { bank: 'CIMB Niaga', amount: 1400, pct: 32 }, { bank: 'Bank BCA', amount: 880, pct: 20 }] },
+      ],
+      ntb: [
+        { rank: 6,  name: 'PT Charoen Pokphand Indonesia', banks: [{ bank: 'Bank BCA', amount: 2800, pct: 60 }, { bank: 'Bank Mandiri', amount: 1100, pct: 24 }, { bank: 'Bank BNI', amount: 740, pct: 16 }] },
+        { rank: 7,  name: 'PT Japfa Comfeed Indonesia',    banks: [{ bank: 'Bank BCA', amount: 1900, pct: 54 }, { bank: 'Bank Mandiri', amount: 1000, pct: 28 }, { bank: 'Bank BNI', amount: 640, pct: 18 }] },
+        { rank: 8,  name: 'PT Sierad Produce Tbk',         banks: [{ bank: 'Bank Mandiri', amount: 1400, pct: 50 }, { bank: 'Bank BRI', amount: 700, pct: 25 }, { bank: 'Bank BCA', amount: 700, pct: 25 }] },
+        { rank: 9,  name: 'PT Indofood Agri Resources',    banks: [{ bank: 'Bank BNI', amount: 1100, pct: 44 }, { bank: 'Bank BCA', amount: 800, pct: 32 }, { bank: 'Bank Mandiri', amount: 600, pct: 24 }] },
+        { rank: 10, name: 'PT Smart Tbk',                  banks: [{ bank: 'Bank BCA', amount: 900, pct: 46 }, { bank: 'Bank Mandiri', amount: 600, pct: 31 }, { bank: 'Bank BNI', amount: 460, pct: 23 }] },
+      ],
+    },
+  },
+
+  kino: {
+    ecosystemType: 'Consumer Goods — Personal Care & Food',
+    anchor: 'PT Kino Indonesia Tbk',
+    summary: {
+      totalMembers: 684,
+      etbMembers: 210,
+      ntbMembers: 474,
+      casaBalance: 92,
+      transactionVolume: 1100,
+    },
+    layers: [
+      { layer: 'L0', desc: 'Selected anchor / principal customer',     total: 1,   etb: 1,   ntb: 0,   casa: 18,  trxVol: 110 },
+      { layer: 'L1', desc: 'Direct counterparties of anchor',          total: 68,  etb: 28,  ntb: 40,  casa: 34,  trxVol: 420 },
+      { layer: 'L2', desc: 'Counterparties connected through L1',      total: 215, etb: 72,  ntb: 143, casa: 28,  trxVol: 380 },
+      { layer: 'L3', desc: 'Extended ecosystem connected through L2',  total: 400, etb: 109, ntb: 291, casa: 12,  trxVol: 190 },
+    ],
+    top10Collection: {
+      etb: [
+        { rank: 1, name: 'PT Alfamart Pratama',         banks: [{ bank: 'CIMB Niaga', amount: 1800, pct: 54 }, { bank: 'Bank Mandiri', amount: 900, pct: 27 }, { bank: 'Bank BCA', amount: 630, pct: 19 }] },
+        { rank: 2, name: 'PT Indomarco Adi Prima',      banks: [{ bank: 'Bank BCA', amount: 1400, pct: 50 }, { bank: 'CIMB Niaga', amount: 840, pct: 30 }, { bank: 'Bank BNI', amount: 560, pct: 20 }] },
+        { rank: 3, name: 'PT Hero Supermarket Tbk',     banks: [{ bank: 'CIMB Niaga', amount: 1100, pct: 46 }, { bank: 'Bank BCA', amount: 700, pct: 29 }, { bank: 'Bank Mandiri', amount: 600, pct: 25 }] },
+        { rank: 4, name: 'PT Midi Utama Indonesia Tbk', banks: [{ bank: 'Bank Mandiri', amount: 900, pct: 48 }, { bank: 'Bank BCA', amount: 600, pct: 32 }, { bank: 'CIMB Niaga', amount: 380, pct: 20 }] },
+        { rank: 5, name: 'PT Matahari Putra Prima Tbk', banks: [{ bank: 'Bank BCA', amount: 780, pct: 44 }, { bank: 'Bank Mandiri', amount: 560, pct: 32 }, { bank: 'CIMB Niaga', amount: 424, pct: 24 }] },
+      ],
+      ntb: [
+        { rank: 6,  name: 'PT Erafone Artha Retailindo', banks: [{ bank: 'Bank BCA', amount: 1100, pct: 62 }, { bank: 'Bank Mandiri', amount: 440, pct: 25 }, { bank: 'Bank BRI', amount: 230, pct: 13 }] },
+        { rank: 7,  name: 'PT Ramayana Lestari Sentosa', banks: [{ bank: 'Bank Mandiri', amount: 850, pct: 55 }, { bank: 'Bank BCA', amount: 420, pct: 27 }, { bank: 'Bank BNI', amount: 280, pct: 18 }] },
+        { rank: 8,  name: 'PT Gramedia Asri Media',      banks: [{ bank: 'Bank BCA', amount: 700, pct: 52 }, { bank: 'Bank BNI', amount: 380, pct: 28 }, { bank: 'Bank Mandiri', amount: 270, pct: 20 }] },
+        { rank: 9,  name: 'PT Ace Hardware Indonesia',   banks: [{ bank: 'Bank BCA', amount: 640, pct: 58 }, { bank: 'Bank Mandiri', amount: 320, pct: 29 }, { bank: 'Bank BNI', amount: 144, pct: 13 }] },
+        { rank: 10, name: 'PT Mitra Adiperkasa Tbk',     banks: [{ bank: 'Bank BCA', amount: 590, pct: 54 }, { bank: 'Bank BRI', amount: 300, pct: 27 }, { bank: 'Bank Mandiri', amount: 210, pct: 19 }] },
+      ],
+    },
+    top10Payment: {
+      etb: [
+        { rank: 1, name: 'PT Rohto Laboratories Indonesia', banks: [{ bank: 'Bank BCA', amount: 1200, pct: 52 }, { bank: 'CIMB Niaga', amount: 700, pct: 30 }, { bank: 'Bank BNI', amount: 420, pct: 18 }] },
+        { rank: 2, name: 'PT Tempo Scan Pacific Tbk',       banks: [{ bank: 'CIMB Niaga', amount: 980, pct: 48 }, { bank: 'Bank BCA', amount: 620, pct: 30 }, { bank: 'Bank Mandiri', amount: 440, pct: 22 }] },
+        { rank: 3, name: 'PT Mandom Indonesia Tbk',         banks: [{ bank: 'Bank BCA', amount: 860, pct: 44 }, { bank: 'Bank Mandiri', amount: 600, pct: 31 }, { bank: 'CIMB Niaga', amount: 490, pct: 25 }] },
+        { rank: 4, name: 'PT Darya-Varia Laboratoria',      banks: [{ bank: 'Bank Mandiri', amount: 780, pct: 46 }, { bank: 'CIMB Niaga', amount: 560, pct: 33 }, { bank: 'Bank BNI', amount: 360, pct: 21 }] },
+        { rank: 5, name: 'PT Martina Berto Tbk',            banks: [{ bank: 'CIMB Niaga', amount: 680, pct: 50 }, { bank: 'Bank BCA', amount: 408, pct: 30 }, { bank: 'Bank Mandiri', amount: 272, pct: 20 }] },
+      ],
+      ntb: [
+        { rank: 6,  name: 'PT Beiersdorf Indonesia',        banks: [{ bank: 'Bank BCA', amount: 1400, pct: 65 }, { bank: 'Bank Mandiri', amount: 490, pct: 23 }, { bank: 'Bank BNI', amount: 260, pct: 12 }] },
+        { rank: 7,  name: 'PT L\'Oreal Indonesia',          banks: [{ bank: 'Bank BCA', amount: 1200, pct: 60 }, { bank: 'Bank HSBC', amount: 480, pct: 24 }, { bank: 'Bank Mandiri', amount: 320, pct: 16 }] },
+        { rank: 8,  name: 'PT Unza Vitalis',                banks: [{ bank: 'Bank BCA', amount: 900, pct: 55 }, { bank: 'Bank BNI', amount: 450, pct: 27 }, { bank: 'Bank BRI', amount: 295, pct: 18 }] },
+        { rank: 9,  name: 'PT Coty Indonesia',              banks: [{ bank: 'Bank BCA', amount: 780, pct: 58 }, { bank: 'Bank Mandiri', amount: 360, pct: 27 }, { bank: 'Bank BNI', amount: 200, pct: 15 }] },
+        { rank: 10, name: 'PT Revlon Indonesia',            banks: [{ bank: 'Bank BCA', amount: 650, pct: 56 }, { bank: 'Bank Mandiri', amount: 325, pct: 28 }, { bank: 'Bank BNI', amount: 185, pct: 16 }] },
+      ],
+    },
+  },
+
+  indofood: {
+    ecosystemType: 'Food & Beverage Manufacturing',
+    anchor: 'PT Indofood Sukses Makmur Tbk',
+    summary: {
+      totalMembers: 2180,
+      etbMembers: 720,
+      ntbMembers: 1460,
+      casaBalance: 420,
+      transactionVolume: 6800,
+    },
+    layers: [
+      { layer: 'L0', desc: 'Selected anchor / principal customer',     total: 1,    etb: 1,   ntb: 0,    casa: 72,  trxVol: 840 },
+      { layer: 'L1', desc: 'Direct counterparties of anchor',          total: 280,  etb: 110, ntb: 170,  casa: 168, trxVol: 2600 },
+      { layer: 'L2', desc: 'Counterparties connected through L1',      total: 790,  etb: 280, ntb: 510,  casa: 124, trxVol: 2100 },
+      { layer: 'L3', desc: 'Extended ecosystem connected through L2',  total: 1109, etb: 329, ntb: 780,  casa: 56,  trxVol: 1260 },
+    ],
+    top10Collection: {
+      etb: [
+        { rank: 1, name: 'PT Indomarco Adi Prima',          banks: [{ bank: 'CIMB Niaga', amount: 8400, pct: 44 }, { bank: 'Bank BCA', amount: 5700, pct: 30 }, { bank: 'Bank Mandiri', amount: 4900, pct: 26 }] },
+        { rank: 2, name: 'PT Indogrosir Indonesia',         banks: [{ bank: 'Bank BCA', amount: 6800, pct: 48 }, { bank: 'CIMB Niaga', amount: 4200, pct: 30 }, { bank: 'Bank Mandiri', amount: 3100, pct: 22 }] },
+        { rank: 3, name: 'PT Alfamart Pratama',             banks: [{ bank: 'Bank Mandiri', amount: 5600, pct: 46 }, { bank: 'Bank BCA', amount: 4000, pct: 33 }, { bank: 'CIMB Niaga', amount: 2600, pct: 21 }] },
+        { rank: 4, name: 'PT Hero Supermarket Tbk',         banks: [{ bank: 'CIMB Niaga', amount: 4800, pct: 50 }, { bank: 'Bank BCA', amount: 2880, pct: 30 }, { bank: 'Bank BNI', amount: 1920, pct: 20 }] },
+        { rank: 5, name: 'PT Carrefour Indonesia',          banks: [{ bank: 'Bank BCA', amount: 4200, pct: 52 }, { bank: 'Bank Mandiri', amount: 2520, pct: 31 }, { bank: 'CIMB Niaga', amount: 1380, pct: 17 }] },
+      ],
+      ntb: [
+        { rank: 6,  name: 'PT Sumber Alfaria Trijaya Tbk', banks: [{ bank: 'Bank BCA', amount: 7200, pct: 58 }, { bank: 'Bank Mandiri', amount: 3240, pct: 26 }, { bank: 'Bank BNI', amount: 2000, pct: 16 }] },
+        { rank: 7,  name: 'PT Midi Utama Indonesia Tbk',   banks: [{ bank: 'Bank BCA', amount: 5400, pct: 55 }, { bank: 'Bank Mandiri', amount: 2700, pct: 27 }, { bank: 'Bank BNI', amount: 1800, pct: 18 }] },
+        { rank: 8,  name: 'PT Matahari Putra Prima Tbk',   banks: [{ bank: 'Bank BCA', amount: 4600, pct: 54 }, { bank: 'Bank Mandiri', amount: 2300, pct: 27 }, { bank: 'Bank BNI', amount: 1640, pct: 19 }] },
+        { rank: 9,  name: 'PT Lotte Mart Indonesia',       banks: [{ bank: 'Bank BCA', amount: 3800, pct: 50 }, { bank: 'Bank BNI', amount: 2280, pct: 30 }, { bank: 'Bank Mandiri', amount: 1520, pct: 20 }] },
+        { rank: 10, name: 'PT Trans Retail Indonesia',     banks: [{ bank: 'Bank Mandiri', amount: 3400, pct: 48 }, { bank: 'Bank BCA', amount: 2550, pct: 36 }, { bank: 'Bank BNI', amount: 1140, pct: 16 }] },
+      ],
+    },
+    top10Payment: {
+      etb: [
+        { rank: 1, name: 'PT Bogasari Flour Mills',         banks: [{ bank: 'CIMB Niaga', amount: 9600, pct: 46 }, { bank: 'Bank BCA', amount: 6240, pct: 30 }, { bank: 'Bank Mandiri', amount: 5040, pct: 24 }] },
+        { rank: 2, name: 'PT Salim Ivomas Pratama Tbk',     banks: [{ bank: 'Bank BCA', amount: 7800, pct: 50 }, { bank: 'CIMB Niaga', amount: 4680, pct: 30 }, { bank: 'Bank Mandiri', amount: 3120, pct: 20 }] },
+        { rank: 3, name: 'PT Indofood Agri Resources',      banks: [{ bank: 'CIMB Niaga', amount: 6400, pct: 52 }, { bank: 'Bank BCA', amount: 3840, pct: 31 }, { bank: 'Bank Mandiri', amount: 2120, pct: 17 }] },
+        { rank: 4, name: 'PT Bumi Resources Minerals Tbk',  banks: [{ bank: 'Bank BCA', amount: 5200, pct: 48 }, { bank: 'Bank Mandiri', amount: 3120, pct: 29 }, { bank: 'CIMB Niaga', amount: 2480, pct: 23 }] },
+        { rank: 5, name: 'PT Sari Husada Generasi Mahardhika', banks: [{ bank: 'CIMB Niaga', amount: 4400, pct: 44 }, { bank: 'Bank BCA', amount: 3080, pct: 31 }, { bank: 'Bank Mandiri', amount: 2520, pct: 25 }] },
+      ],
+      ntb: [
+        { rank: 6,  name: 'Cargill Indonesia',              banks: [{ bank: 'Citibank', amount: 8200, pct: 62 }, { bank: 'Bank BCA', amount: 3074, pct: 23 }, { bank: 'HSBC Indonesia', amount: 2000, pct: 15 }] },
+        { rank: 7,  name: 'Louis Dreyfus Company Asia',     banks: [{ bank: 'Bank BCA', amount: 6400, pct: 58 }, { bank: 'Citibank', amount: 2880, pct: 26 }, { bank: 'HSBC Indonesia', amount: 1760, pct: 16 }] },
+        { rank: 8,  name: 'Wilmar International Ltd',       banks: [{ bank: 'Bank BCA', amount: 5600, pct: 55 }, { bank: 'Bank Mandiri', amount: 2800, pct: 27 }, { bank: 'DBS Indonesia', amount: 1840, pct: 18 }] },
+        { rank: 9,  name: 'PT Sumber Mas Indah Plywood',    banks: [{ bank: 'Bank Mandiri', amount: 4200, pct: 52 }, { bank: 'Bank BCA', amount: 2520, pct: 31 }, { bank: 'Bank BNI', amount: 1380, pct: 17 }] },
+        { rank: 10, name: 'PT Miwon Indonesia',             banks: [{ bank: 'Bank BCA', amount: 3600, pct: 50 }, { bank: 'Bank Mandiri', amount: 2160, pct: 30 }, { bank: 'Bank BNI', amount: 1440, pct: 20 }] },
+      ],
+    },
   },
 };
 

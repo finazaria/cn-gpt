@@ -7,8 +7,10 @@ export const RESPONSE_TYPES = {
   LEAKAGE:          'LEAKAGE',
   PRODUCTS:         'PRODUCTS',
   INCOME:           'INCOME',
+  ECOSYSTEM:        'ECOSYSTEM',
   MEETING_PREP:     'MEETING_PREP',
   ACCESS_DENIED:    'ACCESS_DENIED',
+  ECOSYSTEM_REDIRECT: 'ECOSYSTEM_REDIRECT',
   UNKNOWN:          'UNKNOWN',
 };
 
@@ -33,6 +35,14 @@ const patterns = [
   {
     key: RESPONSE_TYPES.INCOME,
     triggers: [/income/i, /revenue/i, /nii/i, /noii/i, /income.*trend/i, /earnings/i, /how.*income/i],
+  },
+  {
+    key: RESPONSE_TYPES.ECOSYSTEM,
+    triggers: [/ecosystem/i, /ecoweb/i, /collection.*pareto/i, /payment.*pareto/i, /top.*collection/i, /top.*payment/i, /counterpart/i, /layer.*breakdown/i, /ntb.*lead/i, /etb.*ntb/i, /network/i, /supply.*chain.*ecosystem/i],
+  },
+  {
+    key: RESPONSE_TYPES.ECOSYSTEM_REDIRECT,
+    triggers: [/more.*ecosystem/i, /detail.*ecosystem/i, /deeper.*ecosystem/i, /full.*network/i, /more.*ntb/i, /more.*etb/i, /show.*graph/i, /open.*ecoweb/i, /visit.*ecoweb/i],
   },
   {
     key: RESPONSE_TYPES.MEETING_PREP,
@@ -130,13 +140,23 @@ export const CARD_DEFINITIONS = [
     border: 'var(--green-border)',
   },
   {
+    key: 'ECOSYSTEM',
+    label: 'Ecosystem',
+    desc: 'Counterparty network, top collection & payment flows',
+    icon: 'network',
+    prompt: (name) => `Show me the ecosystem for ${name}`,
+    color: '#6264A7',
+    bg: '#f3f0ff',
+    border: '#c4b5fd',
+  },
+  {
     key: 'MEETING_PREP',
     label: 'Meeting Prep',
     desc: 'AI-curated brief with talking points for your visit',
     icon: 'calendar',
     prompt: (name) => `Prepare me for my customer meeting with ${name}`,
-    color: '#6264A7',
-    bg: '#f3f0ff',
-    border: '#c4b5fd',
+    color: '#0ea5e9',
+    bg: '#f0f9ff',
+    border: '#bae6fd',
   },
 ];

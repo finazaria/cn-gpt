@@ -3,7 +3,9 @@ import {
   TrendingUp, TrendingDown, AlertTriangle, CheckCircle,
   ArrowUpRight, ArrowDownRight, Package, Zap, Target,
   Users, Building2, Calendar, Star, ChevronRight, ShieldX,
+  Network, ExternalLink, ChevronDown,
 } from 'lucide-react';
+import { ecosystemData, ECOWEB_URL } from '../data/mockData.js';
 import {
   FundingTrendChart, LoanTrendChart, IncomeTrendChart,
   IncomePieChart, LeakageTrendChart, LeakageDonut,
@@ -334,7 +336,6 @@ export function LeakageAnalysis({ progress, companyData }) {
                   <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
                     <span style={{ fontSize: 11, color: 'var(--text-3)', minWidth: 14 }}>#{item.rank}</span>
                     <span style={{ fontSize: 13, fontWeight: 600 }}>{item.name}</span>
-                    <Badge color={item.rank === 1 ? 'red' : 'default'}>{item.type}</Badge>
                   </div>
                   <span style={{ fontSize: 12, fontWeight: 700, color: 'var(--red-neg)' }}>Rp {item.amount.toLocaleString()}M</span>
                 </div>
@@ -353,7 +354,7 @@ export function LeakageAnalysis({ progress, companyData }) {
                   <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
                     <span style={{ fontSize: 11, color: 'var(--text-3)', minWidth: 14 }}>#{item.rank}</span>
                     <span style={{ fontSize: 13, fontWeight: 600 }}>{item.name}</span>
-                    <Badge color={item.name === 'Internal CIMB' ? 'green' : 'default'}>{item.type}</Badge>
+                    {item.name === 'Internal CIMB' && <Badge color="green">Internal</Badge>}
                   </div>
                   <span style={{ fontSize: 12, fontWeight: 700, color: 'var(--green)' }}>Rp {item.amount.toLocaleString()}M</span>
                 </div>
@@ -573,8 +574,258 @@ export function MeetingPrep({ progress, companyData }) {
 }
 
 // ═══════════════════════════════════════════════════════════════════════════
-// Unknown / fallback
+// ECOSYSTEM ANALYSIS
 // ═══════════════════════════════════════════════════════════════════════════
+function BankBar({ bank, amount, pct, isCIMB }) {
+  return (
+    <div style={{ marginBottom: 4 }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 2 }}>
+        <span style={{ fontSize: 11, color: isCIMB ? 'var(--red)' : 'var(--text-2)', fontWeight: isCIMB ? 600 : 400 }}>
+          {bank}{isCIMB ? ' ✦' : ''}
+        </span>
+        <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+          <span style={{ fontSize: 11, color: 'var(--text-3)' }}>{pct}%</span>
+          <span style={{ fontSize: 11, fontWeight: 600, color: 'var(--text-1)', minWidth: 70, textAlign: 'right' }}>
+            IDR {amount >= 1000 ? `${(amount/1000).toFixed(1)}B` : `${amount}M`}
+          </span>
+        </div>
+      </div>
+      <div style={{ height: 4, background: 'var(--bg-3)', borderRadius: 2, overflow: 'hidden' }}>
+        <div style={{ width: `${pct}%`, height: '100%', background: isCIMB ? 'var(--red)' : 'var(--text-3)', borderRadius: 2, opacity: isCIMB ? 1 : 0.4 }}/>
+      </div>
+    </div>
+  );
+}
+
+function CounterpartyRow({ item, isETB, index }) {
+  const [expanded, setExpanded] = React.useState(false);
+  const badgeColor = isETB ? { bg: 'var(--green-bg)', color: 'var(--green)', border: 'var(--green-border)' }
+                           : { bg: 'var(--amber-bg)', color: 'var(--amber)', border: 'var(--amber-border)' };
+  return (
+    <div style={{
+      border: '1px solid var(--border)', borderRadius: 10, marginBottom: 6, overflow: 'hidden',
+      background: expanded ? 'var(--bg-2)' : '#fff',
+      transition: 'background 0.15s',
+    }}>
+      <button
+        onClick={() => setExpanded(p => !p)}
+        style={{
+          width: '100%', display: 'flex', alignItems: 'center', gap: 10,
+          padding: '10px 12px', background: 'transparent', cursor: 'default',
+        }}
+      >
+        <span style={{ fontSize: 11, color: 'var(--text-3)', minWidth: 20, textAlign: 'right' }}>#{item.rank}</span>
+        <span style={{ flex: 1, fontSize: 13, fontWeight: 500, color: 'var(--text-1)', textAlign: 'left' }}>
+          {item.name}
+        </span>
+        <span style={{
+          fontSize: 10, fontWeight: 600, padding: '2px 7px', borderRadius: 20,
+          background: badgeColor.bg, color: badgeColor.color, border: `1px solid ${badgeColor.border}`,
+        }}>{isETB ? 'ETB' : 'NTB'}</span>
+        <span style={{ fontSize: 11, color: 'var(--text-3)', marginLeft: 4 }}>
+          {item.banks.length} banks
+        </span>
+        <ChevronDown size={12} style={{
+          color: 'var(--text-3)', transform: expanded ? 'rotate(180deg)' : 'none',
+          transition: 'transform 0.2s', cursor: 'pointer',
+        }} onClick={e => { e.stopPropagation(); setExpanded(p => !p); }}/>
+      </button>
+
+      {expanded && (
+        <div style={{ padding: '0 12px 12px 40px' }}>
+          {item.banks.map((b, i) => (
+            <BankBar key={i} bank={b.bank} amount={b.amount} pct={b.pct}
+              isCIMB={b.bank.toLowerCase().includes('cimb')}/>
+          ))}
+          <div style={{ fontSize: 10, color: 'var(--text-3)', marginTop: 6 }}>
+            ✦ CIMB Niaga share highlighted
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+function Top10Table({ data, title, isCollection, show }) {
+  if (!show) return null;
+  const allItems = [...data.etb, ...data.ntb];
+  return (
+    <Card className="fade-in" style={{ marginTop: 0 }}>
+      <SectionTitle icon={isCollection ? TrendingUp : TrendingDown}>{title}</SectionTitle>
+      <div style={{ display: 'flex', gap: 6, marginBottom: 12 }}>
+        <span style={{ fontSize: 11, color: 'var(--text-3)' }}>
+          Click any row to see bank distribution. &nbsp;✦ = CIMB Niaga share
+        </span>
+      </div>
+
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
+        <div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 8 }}>
+            <span style={{ fontSize: 11, fontWeight: 600, color: 'var(--green)',
+              background: 'var(--green-bg)', border: '1px solid var(--green-border)',
+              padding: '2px 8px', borderRadius: 20 }}>ETB — Top 5</span>
+            <span style={{ fontSize: 10, color: 'var(--text-3)' }}>Existing to Bank</span>
+          </div>
+          {data.etb.map((item, i) => (
+            <CounterpartyRow key={i} item={item} isETB={true} index={i}/>
+          ))}
+        </div>
+        <div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 8 }}>
+            <span style={{ fontSize: 11, fontWeight: 600, color: 'var(--amber)',
+              background: 'var(--amber-bg)', border: '1px solid var(--amber-border)',
+              padding: '2px 8px', borderRadius: 20 }}>NTB — Top 5</span>
+            <span style={{ fontSize: 10, color: 'var(--text-3)' }}>New to Bank</span>
+          </div>
+          {data.ntb.map((item, i) => (
+            <CounterpartyRow key={i} item={item} isETB={false} index={i}/>
+          ))}
+        </div>
+      </div>
+    </Card>
+  );
+}
+
+export function EcosystemAnalysis({ progress, companyData }) {
+  const show = (t) => progress >= t;
+  const ecoData = ecosystemData[companyData?.company?.name?.toLowerCase().includes('astra') ? 'astra'
+    : companyData?.company?.name?.toLowerCase().includes('kino') ? 'kino' : 'indofood'];
+
+  if (!ecoData) return <div style={{ fontSize: 13, color: 'var(--text-2)' }}>Ecosystem data not available.</div>;
+
+  const { summary, layers, top10Collection, top10Payment } = ecoData;
+
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+
+      {/* Summary KPIs */}
+      {show(0.05) && (
+        <div className="fade-in">
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: 8, marginBottom: 4 }}>
+            {[
+              { label: 'Total Members', value: summary.totalMembers.toLocaleString(), sub: 'L0 to L3' },
+              { label: 'ETB Members', value: summary.etbMembers.toLocaleString(), sub: 'Existing to Bank', color: 'var(--green)' },
+              { label: 'NTB Members', value: summary.ntbMembers.toLocaleString(), sub: 'Potential leads', color: 'var(--amber)' },
+              { label: 'CASA Balance', value: `IDR ${summary.casaBalance} Bn`, sub: 'Across ecosystem' },
+              { label: 'Transaction Vol.', value: `IDR ${summary.transactionVolume >= 1000 ? (summary.transactionVolume/1000).toFixed(1)+'T' : summary.transactionVolume+' Bn'}`, sub: 'In + out flow' },
+            ].map((m, i) => (
+              <div key={i} style={{ background: 'var(--bg-2)', borderRadius: 10, padding: '10px 12px', border: '1px solid var(--border)' }}>
+                <div style={{ fontSize: 10, color: 'var(--text-3)', marginBottom: 3 }}>{m.label}</div>
+                <div style={{ fontSize: 16, fontWeight: 700, color: m.color || 'var(--text-1)' }}>{m.value}</div>
+                <div style={{ fontSize: 10, color: 'var(--text-3)', marginTop: 2 }}>{m.sub}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Layer Breakdown */}
+      {show(0.2) && (
+        <Card className="fade-in">
+          <SectionTitle icon={Network}>Layer Breakdown</SectionTitle>
+          <div style={{ fontSize: 10, color: 'var(--text-3)', marginBottom: 10, textAlign: 'right' }}>
+            L0 to L3 summary by ETB / NTB and financial value
+          </div>
+          <div style={{ overflowX: 'auto' }}>
+            <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 12 }}>
+              <thead>
+                <tr style={{ background: 'var(--bg-2)' }}>
+                  {['Layer','Description','Total Members','ETB','NTB','CASA (Bn)','Trx Vol (Bn)'].map(h => (
+                    <th key={h} style={{ padding: '8px 10px', textAlign: h === 'Layer' || h === 'Description' ? 'left' : 'right',
+                      fontWeight: 600, color: 'var(--text-2)', fontSize: 11, borderBottom: '1px solid var(--border)',
+                      whiteSpace: 'nowrap' }}>{h}</th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {layers.map((row, i) => (
+                  <tr key={i} style={{ borderBottom: '1px solid var(--border)', background: i === 0 ? 'var(--red-light)' : '#fff' }}>
+                    <td style={{ padding: '9px 10px', fontWeight: 700, color: 'var(--red)' }}>{row.layer}</td>
+                    <td style={{ padding: '9px 10px', color: 'var(--text-2)', fontSize: 11 }}>{row.desc}</td>
+                    <td style={{ padding: '9px 10px', textAlign: 'right', fontWeight: 600 }}>{row.total.toLocaleString()}</td>
+                    <td style={{ padding: '9px 10px', textAlign: 'right' }}>
+                      <span style={{ color: 'var(--green)', fontWeight: 600, background: 'var(--green-bg)', padding: '2px 6px', borderRadius: 4 }}>
+                        {row.etb} ETB
+                      </span>
+                    </td>
+                    <td style={{ padding: '9px 10px', textAlign: 'right' }}>
+                      <span style={{ color: 'var(--amber)', fontWeight: 600, background: 'var(--amber-bg)', padding: '2px 6px', borderRadius: 4 }}>
+                        {row.ntb} NTB
+                      </span>
+                    </td>
+                    <td style={{ padding: '9px 10px', textAlign: 'right', color: 'var(--text-1)' }}>IDR {row.casa} Bn</td>
+                    <td style={{ padding: '9px 10px', textAlign: 'right', color: 'var(--text-1)' }}>
+                      IDR {row.trxVol >= 1000 ? `${(row.trxVol/1000).toFixed(1)}T` : `${row.trxVol} Bn`}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </Card>
+      )}
+
+      {/* Top 10 Collection */}
+      {show(0.45) && (
+        <Top10Table data={top10Collection} title="Top 10 Collection Counterparties" isCollection={true} show={true}/>
+      )}
+
+      {/* Top 10 Payment */}
+      {show(0.7) && (
+        <Top10Table data={top10Payment} title="Top 10 Payment Counterparties" isCollection={false} show={true}/>
+      )}
+
+      {/* EcoWeb redirect CTA */}
+      {show(0.9) && (
+        <Card style={{
+          background: 'linear-gradient(135deg, #1a1d23 0%, #2d3142 100%)',
+          border: 'none', color: '#fff',
+        }} className="fade-in">
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 16, flexWrap: 'wrap' }}>
+            <div style={{ display: 'flex', gap: 12, alignItems: 'flex-start' }}>
+              <div style={{
+                width: 40, height: 40, borderRadius: 10,
+                background: 'rgba(204,0,1,0.8)',
+                display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0,
+              }}>
+                <Network size={18} style={{ color: '#fff' }}/>
+              </div>
+              <div>
+                <div style={{ fontSize: 14, fontWeight: 700, marginBottom: 4 }}>
+                  Explore the Full Ecosystem Network
+                </div>
+                <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.65)', lineHeight: 1.6 }}>
+                  View detailed transaction network graphs, counterparty relationships, and NTB acquisition leads via the EcoWeb Intelligence Portal.
+                </div>
+                <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.4)', marginTop: 4 }}>
+                  ETB/NTB data shown above is a summary view only. Full analysis available in EcoWeb.
+                </div>
+              </div>
+            </div>
+            <a
+              href={ECOWEB_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{
+                display: 'inline-flex', alignItems: 'center', gap: 8,
+                padding: '10px 20px', borderRadius: 10,
+                background: 'var(--red)', color: '#fff',
+                fontSize: 13, fontWeight: 600, textDecoration: 'none',
+                flexShrink: 0,
+                transition: 'background 0.15s',
+              }}
+              onMouseEnter={e => e.currentTarget.style.background = 'var(--red-dark)'}
+              onMouseLeave={e => e.currentTarget.style.background = 'var(--red)'}
+            >
+              Open EcoWeb Graph
+              <ExternalLink size={14}/>
+            </a>
+          </div>
+        </Card>
+      )}
+    </div>
+  );
+}
 export function UnknownResponse({ companyData }) {
   const name = companyData?.company?.name || 'the selected company';
   const suggestions = [
@@ -595,6 +846,37 @@ export function UnknownResponse({ companyData }) {
             → {s}
           </div>
         ))}
+      </div>
+    </div>
+  );
+}
+
+// Ecosystem follow-up redirect (for further ecosystem questions)
+export function EcosystemRedirect() {
+  return (
+    <div style={{ padding: '4px 0' }}>
+      <div style={{ padding: '14px 16px', borderRadius: 12, background: '#f3f0ff', border: '1px solid #c4b5fd' }}>
+        <div style={{ fontSize: 13, fontWeight: 600, color: '#6264A7', marginBottom: 6 }}>
+          🌐 For More Ecosystem Details — Visit EcoWeb
+        </div>
+        <div style={{ fontSize: 13, color: 'var(--text-1)', lineHeight: 1.7, marginBottom: 10 }}>
+          To gain more detailed information about this client's ecosystem — including full network graphs, 
+          transaction flows, and NTB acquisition leads — please visit the <strong>EcoWeb Intelligence Portal</strong>.
+        </div>
+        <a
+          href={ECOWEB_URL}
+          target="_blank"
+          rel="noopener noreferrer"
+          style={{
+            display: 'inline-flex', alignItems: 'center', gap: 6,
+            padding: '8px 16px', borderRadius: 8,
+            background: '#6264A7', color: '#fff',
+            fontSize: 12, fontWeight: 600, textDecoration: 'none',
+          }}
+        >
+          Open EcoWeb Portal
+          <ExternalLink size={12}/>
+        </a>
       </div>
     </div>
   );

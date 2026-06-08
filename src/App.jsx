@@ -14,7 +14,7 @@ function generateId() { return Math.random().toString(36).slice(2, 10); }
 
 const STREAM_DURATION = {
   COMPANY_OVERVIEW: 2800, FUNDING_LENDING: 2400, LEAKAGE: 2200,
-  PRODUCTS: 2000, INCOME: 2200, MEETING_PREP: 2600, UNKNOWN: 600,
+  PRODUCTS: 2000, INCOME: 2200, ECOSYSTEM: 3200, MEETING_PREP: 2600, UNKNOWN: 600,
 };
 
 export default function App() {
@@ -125,7 +125,6 @@ export default function App() {
       {/* Main */}
       <div style={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden', minWidth: 0, background: 'var(--bg)' }}>
         <Header
-          activeSession={activeSession}
           currentCompany={selectedCompany}
           onNew={newSession}
         />
@@ -178,6 +177,7 @@ export default function App() {
                   msg={msg}
                   onFeedback={handleFeedback}
                   companyData={companyData}
+                  activeSession={activeSession}
                 />
               ))}
               <div ref={messagesEndRef}/>

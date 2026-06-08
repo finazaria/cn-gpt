@@ -30,7 +30,7 @@ export default function CompanySelector({ onSelect }) {
 
   const segments = {
     astra: 'Corporate Banking',
-    kino: 'Corporate Banking',
+    kino: 'Commercial Banking',
     indofood: 'Corporate Banking',
   };
 
