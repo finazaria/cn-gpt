@@ -334,7 +334,7 @@ export const kinoData = {
     },
   ],
   meetingPrep: {
-    snapshot: { industry: 'Consumer Goods — Personal Care & Food', group: 'Kino Group', segment: 'Commercial Banking', rm: 'Sari Puspita', lastMeeting: '3 Oct 2024' },
+    snapshot: { industry: 'Consumer Goods — Personal Care & Food', group: 'Kino Group', segment: 'Corporate Banking', rm: 'Sari Puspita', lastMeeting: '3 Oct 2024' },
     keyMetrics: [
       { label: 'CASA Balance', value: '+11.4% YoY', trend: 'up' },
       { label: 'Loan OS', value: '+4.2% YoY', trend: 'up' },
