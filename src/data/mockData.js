@@ -213,7 +213,7 @@ export const kinoData = {
     cif: '0023456789',
     industry: 'Consumer Goods — Personal Care & Food',
     group: 'Kino Group',
-    segment: 'Commercial Banking',
+    segment: 'Corporate Banking',
     th: 'Reza Firmansyah',
     rm: 'Sari Puspita',
     cifStatus: 'ACTIVE',
