@@ -1,142 +1,159 @@
 import React from 'react';
-import { Building2, TrendingUp, AlertTriangle, Package, BarChart2, Calendar } from 'lucide-react';
+import { Building2, TrendingUp, AlertTriangle, Package, BarChart2, Calendar, Lock } from 'lucide-react';
+import { CARD_DEFINITIONS } from '../utils/matcher.js';
+import { CARD_CONFIG } from '../data/mockData.js';
 
-const cards = [
-  {
-    icon: Building2,
-    title: 'Company Overview',
-    desc: 'Full profile, financials, and key metrics at a glance',
-    prompt: 'Tell me about PT ABC',
-    color: 'var(--red)',
-    bg: 'var(--red-light)',
-    border: 'var(--red-border)',
-  },
-  {
-    icon: TrendingUp,
-    title: 'Balance Trends',
-    desc: 'Funding & lending trends with COBA analysis',
-    prompt: 'Show funding & lending balance trend',
-    color: 'var(--blue)',
-    bg: 'var(--blue-bg)',
-    border: 'var(--blue-border)',
-  },
-  {
-    icon: AlertTriangle,
-    title: 'Leakage Analysis',
-    desc: 'CASA leakage rate and top flow destinations',
-    prompt: 'Analyze leakage for PT ABC',
-    color: 'var(--red-neg)',
-    bg: 'var(--red-neg-bg)',
-    border: 'var(--red-neg-border)',
-  },
-  {
-    icon: Package,
-    title: 'Product Holding',
-    desc: 'Active products, gaps, and cross-sell opportunities',
-    prompt: 'What products does PT ABC currently use?',
-    color: 'var(--amber)',
-    bg: 'var(--amber-bg)',
-    border: 'var(--amber-border)',
-  },
-  {
-    icon: BarChart2,
-    title: 'Income Trend',
-    desc: 'NII and NOII breakdown across 12 months',
-    prompt: "How's the income trend?",
-    color: 'var(--green)',
-    bg: 'var(--green-bg)',
-    border: 'var(--green-border)',
-  },
-  {
-    icon: Calendar,
-    title: 'Meeting Prep',
-    desc: 'AI-curated brief with talking points for your visit',
-    prompt: 'Prepare me for my customer meeting',
-    color: '#6264A7',
-    bg: '#f3f0ff',
-    border: '#c4b5fd',
-  },
-];
+const ICON_MAP = {
+  building: Building2,
+  'trending-up': TrendingUp,
+  'alert-triangle': AlertTriangle,
+  package: Package,
+  'bar-chart': BarChart2,
+  calendar: Calendar,
+};
 
-export default function WelcomeScreen({ onSend }) {
+export default function WelcomeScreen({ onSend, company }) {
+  if (!company) return null;
+
+  const cardConfig = CARD_CONFIG[company.id] || {};
+
   return (
     <div style={{
-      flex: 1, overflowY: 'auto', padding: '40px 24px',
+      flex: 1, overflowY: 'auto', padding: '32px 24px',
       display: 'flex', flexDirection: 'column', alignItems: 'center',
+      background: 'var(--bg)',
     }}>
       {/* Hero */}
-      <div style={{ textAlign: 'center', marginBottom: 36, maxWidth: 500 }}>
+      <div style={{ textAlign: 'center', marginBottom: 28, maxWidth: 560 }}>
+        {/* Mascot / avatar area */}
         <div style={{
-          width: 56, height: 56, borderRadius: 16, background: 'var(--red)',
+          width: 64, height: 64, borderRadius: 18, background: 'var(--red)',
           display: 'flex', alignItems: 'center', justifyContent: 'center',
-          margin: '0 auto 16px', boxShadow: '0 8px 24px rgba(204,0,1,0.2)',
+          margin: '0 auto 14px',
+          boxShadow: '0 8px 28px rgba(204,0,1,0.18)',
         }}>
-          <span style={{ color: '#fff', fontSize: 20, fontWeight: 800 }}>CN</span>
+          <span style={{ color: '#fff', fontSize: 22, fontWeight: 800 }}>CN</span>
         </div>
-        <h1 style={{ fontSize: 26, fontWeight: 700, color: 'var(--text-1)', marginBottom: 8 }}>
+
+        <h2 style={{ fontSize: 22, fontWeight: 700, color: 'var(--text-1)', marginBottom: 6 }}>
           CN-GPT Data Analytics Agent
-        </h1>
-        <p style={{ fontSize: 14, color: 'var(--text-2)', lineHeight: 1.7 }}>
-          Your AI-powered relationship intelligence tool for Business Banking.
-          Ask about any customer's performance, trends, and opportunities.
+        </h2>
+        <p style={{ fontSize: 13, color: 'var(--text-2)', lineHeight: 1.7, marginBottom: 12 }}>
+          Your AI-powered relationship intelligence tool for Business Banking.<br/>
+          Ask about your customer's performance, trends, and opportunities.
         </p>
+
+        {/* Selected company badge */}
         <div style={{
-          display: 'inline-flex', alignItems: 'center', gap: 8, marginTop: 10,
-          padding: '4px 14px', borderRadius: 20,
-          background: 'var(--red-light)', border: '1px solid var(--red-border)',
+          display: 'inline-flex', alignItems: 'center', gap: 8,
+          padding: '6px 16px', borderRadius: 20,
+          background: 'var(--red-light)', border: '1.5px solid var(--red-border)',
           fontSize: 12, color: 'var(--red-dark)', fontWeight: 500,
         }}>
-          Currently loaded: <strong>PT ABC Makmur Tbk</strong>
+          <Building2 size={13}/>
+          Currently loaded: <strong>{company.name}</strong>
         </div>
       </div>
 
       {/* Capability cards */}
       <div style={{
         display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 12,
-        maxWidth: 700, width: '100%',
+        maxWidth: 720, width: '100%', marginBottom: 20,
       }}>
-        {cards.map((c, i) => {
-          const Icon = c.icon;
+        {CARD_DEFINITIONS.map((card, i) => {
+          const Icon = ICON_MAP[card.icon] || Building2;
+          const enabled = cardConfig[card.key] !== false;
+
           return (
-            <button key={i} onClick={() => onSend(c.prompt)} style={{
-              textAlign: 'left', padding: '16px',
-              background: '#fff', border: `1px solid var(--border)`,
-              borderRadius: 12, cursor: 'pointer',
-              transition: 'all 0.2s',
-              animation: `fadeIn 0.4s ${i * 0.06}s both`,
-            }}
+            <button
+              key={card.key}
+              onClick={() => enabled && onSend(card.prompt(company.name))}
+              disabled={!enabled}
+              style={{
+                textAlign: 'left', padding: '16px',
+                background: enabled ? '#fff' : 'var(--bg-2)',
+                border: `1px solid ${enabled ? 'var(--border)' : 'var(--border)'}`,
+                borderRadius: 12,
+                cursor: enabled ? 'pointer' : 'not-allowed',
+                opacity: enabled ? 1 : 0.55,
+                transition: 'all 0.2s',
+                animation: `fadeIn 0.4s ${i * 0.06}s both`,
+                position: 'relative',
+                overflow: 'hidden',
+              }}
               onMouseEnter={e => {
-                e.currentTarget.style.transform = 'translateY(-2px)';
-                e.currentTarget.style.boxShadow = '0 8px 24px rgba(0,0,0,0.08)';
-                e.currentTarget.style.borderColor = c.color;
+                if (enabled) {
+                  e.currentTarget.style.transform = 'translateY(-2px)';
+                  e.currentTarget.style.boxShadow = '0 8px 24px rgba(0,0,0,0.08)';
+                  e.currentTarget.style.borderColor = card.color;
+                }
               }}
               onMouseLeave={e => {
-                e.currentTarget.style.transform = 'translateY(0)';
-                e.currentTarget.style.boxShadow = 'none';
-                e.currentTarget.style.borderColor = 'var(--border)';
+                if (enabled) {
+                  e.currentTarget.style.transform = 'translateY(0)';
+                  e.currentTarget.style.boxShadow = 'none';
+                  e.currentTarget.style.borderColor = 'var(--border)';
+                }
               }}
             >
+              {/* Disabled badge */}
+              {!enabled && (
+                <div style={{
+                  position: 'absolute', top: 8, right: 8,
+                  display: 'flex', alignItems: 'center', gap: 3,
+                  fontSize: 9, fontWeight: 600, color: 'var(--text-3)',
+                  background: 'var(--bg-3)', padding: '2px 6px', borderRadius: 20,
+                  border: '1px solid var(--border)',
+                }}>
+                  <Lock size={8}/> Coming Soon
+                </div>
+              )}
+
               <div style={{
-                width: 34, height: 34, borderRadius: 10,
-                background: c.bg, border: `1px solid ${c.border}`,
-                display: 'flex', alignItems: 'center', justifyContent: 'center',
-                marginBottom: 10,
+                width: 36, height: 36, borderRadius: 10,
+                background: enabled ? card.bg : 'var(--bg-3)',
+                border: `1px solid ${enabled ? card.border : 'var(--border)'}`,
+                display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 10,
               }}>
-                <Icon size={16} style={{ color: c.color }} />
+                <Icon size={16} style={{ color: enabled ? card.color : 'var(--text-3)' }}/>
               </div>
-              <div style={{ fontSize: 13, fontWeight: 600, color: 'var(--text-1)', marginBottom: 4 }}>
-                {c.title}
+              <div style={{
+                fontSize: 13, fontWeight: 600,
+                color: enabled ? 'var(--text-1)' : 'var(--text-3)', marginBottom: 4,
+              }}>
+                {card.label}
               </div>
-              <div style={{ fontSize: 12, color: 'var(--text-3)', lineHeight: 1.5 }}>{c.desc}</div>
+              <div style={{ fontSize: 12, color: 'var(--text-3)', lineHeight: 1.5 }}>
+                {enabled ? card.desc : 'Data not yet available for this company'}
+              </div>
             </button>
           );
         })}
       </div>
 
-      {/* Disclaimer */}
-      <div style={{ marginTop: 32, fontSize: 11, color: 'var(--text-3)', textAlign: 'center', maxWidth: 480 }}>
-        🔒 This is a <strong>pilot mockup</strong> using demo data. All figures shown are for demonstration purposes.
-        CIMB Niaga Business Banking · Data Analytics Agent v0.1
+      {/* General chat hint */}
+      <div style={{
+        maxWidth: 720, width: '100%',
+        padding: '12px 16px',
+        background: '#fff',
+        border: '1px solid var(--border)',
+        borderRadius: 10,
+        display: 'flex', alignItems: 'center', gap: 10,
+        fontSize: 12, color: 'var(--text-2)',
+      }}>
+        <div style={{
+          width: 28, height: 28, borderRadius: 8, background: 'var(--red-light)',
+          display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0,
+        }}>
+          <span style={{ fontSize: 13 }}>💬</span>
+        </div>
+        <span>
+          Or <strong>type any question</strong> in the chat box below — the agent will identify and answer based on {company.name}'s data.
+        </span>
+      </div>
+
+      <div style={{ marginTop: 20, fontSize: 11, color: 'var(--text-3)', textAlign: 'center' }}>
+        🔒 Pilot mockup — all figures are for demonstration purposes only
       </div>
     </div>
   );

@@ -1,22 +1,40 @@
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
 :root {
+  /* Brand */
   --red: #CC0001;
   --red-dark: #a80001;
   --red-light: #fff0f0;
   --red-mid: #ffe0e0;
   --red-border: rgba(204,0,1,0.2);
-  --bg: #ffffff;
-  --bg-2: #f8f9fb;
-  --bg-3: #f1f3f7;
+
+  /* Sidebar (dark) */
+  --sidebar-bg: #1a1d23;
+  --sidebar-hover: #252930;
+  --sidebar-active: #CC0001;
+  --sidebar-text: #c9cdd6;
+  --sidebar-text-dim: #6b7280;
+  --sidebar-border: rgba(255,255,255,0.07);
+
+  /* Main content (light) */
+  --bg: #f5f6f8;
   --bg-card: #ffffff;
+  --bg-2: #f0f2f5;
+  --bg-3: #e8eaee;
   --bg-hover: #f5f7fa;
-  --sidebar-bg: #fafbfc;
-  --border: #e8eaee;
-  --border-med: #d4d8e0;
+  --border: #e4e6ea;
+  --border-med: #d1d5db;
+
+  /* Text */
   --text-1: #0f1623;
   --text-2: #4b5568;
   --text-3: #9aa3b2;
+
+  /* Topbar */
+  --topbar-bg: #ffffff;
+  --topbar-border: #e4e6ea;
+
+  /* Status colors */
   --green: #16a34a;
   --green-bg: #f0fdf4;
   --green-border: #bbf7d0;
@@ -29,14 +47,14 @@
   --blue: #2563eb;
   --blue-bg: #eff6ff;
   --blue-border: #bfdbfe;
+
   --font: 'DM Sans', sans-serif;
   --mono: 'DM Mono', monospace;
   --radius: 10px;
   --radius-lg: 14px;
-  --radius-xl: 18px;
   --shadow: 0 4px 20px rgba(0,0,0,0.08);
   --shadow-sm: 0 1px 4px rgba(0,0,0,0.06);
-  --shadow-md: 0 8px 32px rgba(0,0,0,0.1);
+  --shadow-md: 0 8px 32px rgba(0,0,0,0.12);
 }
 
 html, body, #root {
@@ -51,17 +69,22 @@ html, body, #root {
 
 ::-webkit-scrollbar { width: 5px; height: 5px; }
 ::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: var(--border-med); border-radius: 10px; }
-::-webkit-scrollbar-thumb:hover { background: var(--text-3); }
+::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.15); border-radius: 10px; }
+::-webkit-scrollbar-thumb:hover { background: rgba(0,0,0,0.25); }
+
+/* Dark scrollbar for sidebar */
+.sidebar-scroll::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); }
+.sidebar-scroll::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.2); }
 
 button { font-family: var(--font); cursor: pointer; border: none; background: none; color: inherit; }
 input, textarea { font-family: var(--font); }
 
 @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes fadeInScale { from { opacity: 0; transform: scale(0.96); } to { opacity: 1; transform: scale(1); } }
 @keyframes slideInLeft { from { opacity: 0; transform: translateX(-10px); } to { opacity: 1; transform: translateX(0); } }
-@keyframes blink { 0%,100% { opacity:1; } 50% { opacity:0; } }
-@keyframes spin { to { transform: rotate(360deg); } }
 @keyframes typing-dot { 0%,80%,100% { transform: scale(0.6); opacity:0.4; } 40% { transform: scale(1); opacity:1; } }
+@keyframes spin { to { transform: rotate(360deg); } }
+@keyframes shimmer { 0% { opacity:0.4; } 50% { opacity:1; } 100% { opacity:0.4; } }
 
-.fade-in { animation: fadeIn 0.35s ease forwards; }
-.slide-in { animation: slideInLeft 0.25s ease forwards; }
+.fade-in { animation: fadeIn 0.3s ease forwards; }
+.fade-in-scale { animation: fadeInScale 0.25s ease forwards; }
