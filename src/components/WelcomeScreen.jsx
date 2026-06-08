@@ -39,8 +39,8 @@ export default function WelcomeScreen({ onSend, company }) {
           CN-GPT Data Analytics Agent
         </h2>
         <p style={{ fontSize: 13, color: 'var(--text-2)', lineHeight: 1.7, marginBottom: 12 }}>
-          Your AI-powered relationship intelligence tool for Business Banking.<br/>
-          Ask about your customer's performance, trends, and opportunities.
+          Your AI-powered customer intelligence agent.<br/>
+          Uncover portfolio insights, trends, and opportunities — across all your clients.
         </p>
 
         {/* Selected company badge */}
