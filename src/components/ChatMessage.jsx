@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { ThumbsUp, ThumbsDown, Copy, Check, Download, Share2, FileText, File, ExternalLink, ChevronDown } from 'lucide-react';
+import { ThumbsUp, ThumbsDown, Copy, Check, Download, Share2, FileText, File, ExternalLink, ChevronDown, X } from 'lucide-react';
 import { copyToClipboard, exportToPDF, exportToWord, shareToTeams } from '../utils/export.js';
 import {
   CompanyOverview, FundingLendingTrend, LeakageAnalysis,
@@ -106,14 +106,129 @@ function FeedBtn({ active, color, bg, border, onClick, icon }) {
   );
 }
 
-// Per-message Export/Share toolbar (matching CN-GPT style)
+// ─── Export Modal ────────────────────────────────────────────────────────────
+function ExportModal({ session, onClose }) {
+  const [toast, setToast] = useState(null);
+  const showToast = (msg) => { setToast(msg); setTimeout(() => { setToast(null); onClose(); }, 1400); };
+
+  return (
+    <div style={{
+      position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.45)',
+      display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 500,
+    }} onClick={onClose}>
+      <div style={{
+        background: '#fff', borderRadius: 16, width: 480,
+        boxShadow: '0 20px 60px rgba(0,0,0,0.2)', overflow: 'hidden',
+        animation: 'fadeInScale 0.2s ease',
+      }} onClick={e => e.stopPropagation()}>
+        {/* Header */}
+        <div style={{ background: 'var(--red)', padding: '16px 20px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+          <div style={{ color: '#fff' }}>
+            <div style={{ fontSize: 16, fontWeight: 700 }}>Export Conversation</div>
+            <div style={{ fontSize: 12, opacity: 0.8, marginTop: 2 }}>Choose a format to download this conversation</div>
+          </div>
+          <button onClick={onClose} style={{ color: '#fff', opacity: 0.8 }}><X size={18}/></button>
+        </div>
+        {/* Options */}
+        <div style={{ padding: '16px' }}>
+          <ModalOptionBtn
+            icon={<FileText size={22}/>}
+            iconBg="var(--red)"
+            title="Export to PDF"
+            desc="Download conversation in PDF format"
+            onClick={() => { exportToPDF(session); showToast('Exported as PDF'); }}
+          />
+          <div style={{ height: 8 }}/>
+          <ModalOptionBtn
+            icon={<File size={22}/>}
+            iconBg="var(--blue)"
+            title="Export to Word (.docx)"
+            desc="Download conversation in Word format"
+            onClick={() => { exportToWord(session); showToast('Exported as Word'); }}
+          />
+        </div>
+      </div>
+      {toast && <Toast msg={toast}/>}
+    </div>
+  );
+}
+
+// ─── Share Modal ─────────────────────────────────────────────────────────────
+function ShareModal({ session, onClose }) {
+  const [toast, setToast] = useState(null);
+  const showToast = (msg) => { setToast(msg); setTimeout(() => { setToast(null); onClose(); }, 1400); };
+
+  return (
+    <div style={{
+      position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.45)',
+      display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 500,
+    }} onClick={onClose}>
+      <div style={{
+        background: '#fff', borderRadius: 16, width: 480,
+        boxShadow: '0 20px 60px rgba(0,0,0,0.2)', overflow: 'hidden',
+        animation: 'fadeInScale 0.2s ease',
+      }} onClick={e => e.stopPropagation()}>
+        {/* Header */}
+        <div style={{ background: 'var(--red)', padding: '16px 20px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+          <div style={{ color: '#fff' }}>
+            <div style={{ fontSize: 16, fontWeight: 700 }}>Share Conversation</div>
+            <div style={{ fontSize: 12, opacity: 0.8, marginTop: 2 }}>Choose how to share this conversation</div>
+          </div>
+          <button onClick={onClose} style={{ color: '#fff', opacity: 0.8 }}><X size={18}/></button>
+        </div>
+        {/* Options */}
+        <div style={{ padding: '16px' }}>
+          <ModalOptionBtn
+            icon={<ExternalLink size={22}/>}
+            iconBg="#6264A7"
+            title="Share to Microsoft Teams"
+            desc="Share this conversation to your Teams channel"
+            onClick={() => { shareToTeams(session); showToast('Opening Teams…'); }}
+          />
+        </div>
+      </div>
+      {toast && <Toast msg={toast}/>}
+    </div>
+  );
+}
+
+function ModalOptionBtn({ icon, iconBg, title, desc, onClick }) {
+  return (
+    <button onClick={onClick} style={{
+      width: '100%', display: 'flex', alignItems: 'center', gap: 14,
+      padding: '14px 16px', borderRadius: 12,
+      background: iconBg, color: '#fff',
+      transition: 'opacity 0.15s', textAlign: 'left',
+    }}
+      onMouseEnter={e => e.currentTarget.style.opacity = '0.88'}
+      onMouseLeave={e => e.currentTarget.style.opacity = '1'}
+    >
+      <div style={{ width: 40, height: 40, borderRadius: 10, background: 'rgba(255,255,255,0.2)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+        {icon}
+      </div>
+      <div>
+        <div style={{ fontSize: 14, fontWeight: 700 }}>{title}</div>
+        <div style={{ fontSize: 12, opacity: 0.85, marginTop: 2 }}>{desc}</div>
+      </div>
+    </button>
+  );
+}
+
+function Toast({ msg }) {
+  return (
+    <div style={{
+      position: 'fixed', bottom: 24, left: '50%', transform: 'translateX(-50%)',
+      background: '#1a1d23', color: '#fff', padding: '8px 18px', borderRadius: 20,
+      fontSize: 13, boxShadow: 'var(--shadow-md)', zIndex: 999, animation: 'fadeIn 0.2s ease',
+    }}>{msg}</div>
+  );
+}
+
+// ─── Per-message action toolbar ───────────────────────────────────────────────
 function MessageActions({ title, session }) {
   const [copied, setCopied] = useState(false);
-  const [exportOpen, setExportOpen] = useState(false);
-  const [shareOpen, setShareOpen] = useState(false);
-  const [toast, setToast] = useState(null);
-
-  const showToast = (msg) => { setToast(msg); setTimeout(() => setToast(null), 2000); };
+  const [showExport, setShowExport] = useState(false);
+  const [showShare, setShowShare] = useState(false);
 
   const handleCopy = () => {
     copyToClipboard(`CN-GPT · ${title}\n\n[Rich response — view in CN-GPT app]`).then(() => {
@@ -123,58 +238,26 @@ function MessageActions({ title, session }) {
   };
 
   return (
-    <div style={{ display: 'flex', alignItems: 'center', gap: 6, position: 'relative' }}>
+    <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
       {/* Copy */}
       <ActionBtn onClick={handleCopy} title="Copy">
         {copied ? <Check size={13} style={{ color: 'var(--green)' }}/> : <Copy size={13}/>}
       </ActionBtn>
 
-      {/* Export */}
-      <div style={{ position: 'relative' }}>
-        <ActionBtn onClick={() => { setExportOpen(p=>!p); setShareOpen(false); }} title="Export">
-          <Download size={13}/>
-          <span style={{ fontSize: 11 }}>Export</span>
-          <ChevronDown size={10}/>
-        </ActionBtn>
-        {exportOpen && (
-          <MiniDropdown onClose={() => setExportOpen(false)}>
-            <MiniItem onClick={() => { exportToPDF(session); setExportOpen(false); showToast('Exported as PDF'); }}
-              icon={<FileText size={12} style={{ color: 'var(--red-neg)' }}/>} label="Export as PDF"/>
-            <MiniItem onClick={() => { exportToWord(session); setExportOpen(false); showToast('Exported as Word'); }}
-              icon={<File size={12} style={{ color: 'var(--blue)' }}/>} label="Export as Word" border/>
-          </MiniDropdown>
-        )}
-      </div>
+      {/* Export — opens modal */}
+      <ActionBtn onClick={() => setShowExport(true)} title="Export">
+        <Download size={13}/>
+        <span style={{ fontSize: 11 }}>Export</span>
+      </ActionBtn>
 
-      {/* Share */}
-      <div style={{ position: 'relative' }}>
-        <ActionBtn onClick={() => { setShareOpen(p=>!p); setExportOpen(false); }} title="Share">
-          <Share2 size={13}/>
-          <span style={{ fontSize: 11 }}>Share</span>
-          <ChevronDown size={10}/>
-        </ActionBtn>
-        {shareOpen && (
-          <MiniDropdown onClose={() => setShareOpen(false)}>
-            <MiniItem onClick={() => { shareToTeams(session); setShareOpen(false); showToast('Opening Teams…'); }}
-              icon={<ExternalLink size={12} style={{ color: '#6264A7' }}/>} label="Share to Microsoft Teams"/>
-            <MiniItem onClick={() => { navigator.clipboard.writeText(window.location.href); setShareOpen(false); showToast('Link copied'); }}
-              icon={<Share2 size={12} style={{ color: 'var(--text-2)' }}/>} label="Copy link" border/>
-          </MiniDropdown>
-        )}
-      </div>
+      {/* Share — opens modal */}
+      <ActionBtn onClick={() => setShowShare(true)} title="Share">
+        <Share2 size={13}/>
+        <span style={{ fontSize: 11 }}>Share</span>
+      </ActionBtn>
 
-      {(exportOpen || shareOpen) && (
-        <div style={{ position: 'fixed', inset: 0, zIndex: 199 }}
-          onClick={() => { setExportOpen(false); setShareOpen(false); }}/>
-      )}
-
-      {toast && (
-        <div style={{
-          position: 'fixed', bottom: 24, left: '50%', transform: 'translateX(-50%)',
-          background: '#1a1d23', color: '#fff', padding: '8px 18px', borderRadius: 20,
-          fontSize: 13, boxShadow: 'var(--shadow-md)', zIndex: 999, animation: 'fadeIn 0.2s ease',
-        }}>{toast}</div>
-      )}
+      {showExport && <ExportModal session={session} onClose={() => setShowExport(false)}/>}
+      {showShare && <ShareModal session={session} onClose={() => setShowShare(false)}/>}
     </div>
   );
 }
@@ -191,31 +274,6 @@ function ActionBtn({ onClick, title, children }) {
       onMouseEnter={e => { e.currentTarget.style.borderColor = 'var(--red)'; e.currentTarget.style.color = 'var(--red)'; }}
       onMouseLeave={e => { e.currentTarget.style.borderColor = 'var(--border)'; e.currentTarget.style.color = 'var(--text-3)'; }}
     >{children}</button>
-  );
-}
-
-function MiniDropdown({ children, onClose }) {
-  return (
-    <div style={{
-      position: 'absolute', left: 0, top: '100%', marginTop: 4, zIndex: 200,
-      background: '#fff', border: '1px solid var(--border)', borderRadius: 10,
-      boxShadow: 'var(--shadow-md)', minWidth: 180, overflow: 'hidden',
-      animation: 'fadeIn 0.15s ease',
-    }}>{children}</div>
-  );
-}
-
-function MiniItem({ onClick, icon, label, border }) {
-  return (
-    <button onClick={onClick} style={{
-      width: '100%', display: 'flex', alignItems: 'center', gap: 8,
-      padding: '9px 12px', fontSize: 12, color: 'var(--text-1)',
-      borderTop: border ? '1px solid var(--border)' : 'none',
-      transition: 'background 0.1s', textAlign: 'left',
-    }}
-      onMouseEnter={e => e.currentTarget.style.background = 'var(--bg-2)'}
-      onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
-    >{icon}{label}</button>
   );
 }
 

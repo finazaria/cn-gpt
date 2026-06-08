@@ -597,7 +597,7 @@ function BankBar({ bank, amount, pct, isCIMB }) {
   );
 }
 
-function CounterpartyRow({ item, isETB, index }) {
+function CounterpartyRow({ item, isETB, displayRank }) {
   const [expanded, setExpanded] = React.useState(false);
   const badgeColor = isETB ? { bg: 'var(--green-bg)', color: 'var(--green)', border: 'var(--green-border)' }
                            : { bg: 'var(--amber-bg)', color: 'var(--amber)', border: 'var(--amber-border)' };
@@ -611,10 +611,10 @@ function CounterpartyRow({ item, isETB, index }) {
         onClick={() => setExpanded(p => !p)}
         style={{
           width: '100%', display: 'flex', alignItems: 'center', gap: 10,
-          padding: '10px 12px', background: 'transparent', cursor: 'default',
+          padding: '10px 12px', background: 'transparent', cursor: 'pointer',
         }}
       >
-        <span style={{ fontSize: 11, color: 'var(--text-3)', minWidth: 20, textAlign: 'right' }}>#{item.rank}</span>
+        <span style={{ fontSize: 11, color: 'var(--text-3)', minWidth: 20, textAlign: 'right' }}>#{displayRank}</span>
         <span style={{ flex: 1, fontSize: 13, fontWeight: 500, color: 'var(--text-1)', textAlign: 'left' }}>
           {item.name}
         </span>
@@ -627,7 +627,7 @@ function CounterpartyRow({ item, isETB, index }) {
         </span>
         <ChevronDown size={12} style={{
           color: 'var(--text-3)', transform: expanded ? 'rotate(180deg)' : 'none',
-          transition: 'transform 0.2s', cursor: 'pointer',
+          transition: 'transform 0.2s',
         }} onClick={e => { e.stopPropagation(); setExpanded(p => !p); }}/>
       </button>
 
@@ -667,7 +667,7 @@ function Top10Table({ data, title, isCollection, show }) {
             <span style={{ fontSize: 10, color: 'var(--text-3)' }}>Existing to Bank</span>
           </div>
           {data.etb.map((item, i) => (
-            <CounterpartyRow key={i} item={item} isETB={true} index={i}/>
+            <CounterpartyRow key={i} item={item} isETB={true} displayRank={i + 1}/>
           ))}
         </div>
         <div>
@@ -678,7 +678,7 @@ function Top10Table({ data, title, isCollection, show }) {
             <span style={{ fontSize: 10, color: 'var(--text-3)' }}>New to Bank</span>
           </div>
           {data.ntb.map((item, i) => (
-            <CounterpartyRow key={i} item={item} isETB={false} index={i}/>
+            <CounterpartyRow key={i} item={item} isETB={false} displayRank={i + 1}/>
           ))}
         </div>
       </div>

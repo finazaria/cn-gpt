@@ -538,14 +538,14 @@ export const ecosystemData = {
       totalMembers: 1245,
       etbMembers: 430,
       ntbMembers: 815,
-      casaBalance: 185,      // IDR Bn
-      transactionVolume: 2400, // IDR Bn
+      casaBalance: 185,       // IDR Bn — from EcoWeb
+      transactionVolume: 2400, // IDR Bn (2.4 Tn) — from EcoWeb
     },
     layers: [
-      { layer: 'L0', desc: 'Selected anchor / principal customer',     total: 1,   etb: 1,   ntb: 0,   casa: 45,   trxVol: 320 },
-      { layer: 'L1', desc: 'Direct counterparties of anchor',          total: 120, etb: 55,  ntb: 65,  casa: 90,   trxVol: 1100 },
-      { layer: 'L2', desc: 'Counterparties connected through L1',      total: 420, etb: 150, ntb: 270, casa: 65,   trxVol: 850 },
-      { layer: 'L3', desc: 'Extended ecosystem connected through L2',  total: 705, etb: 225, ntb: 480, casa: 30,   trxVol: 450 },
+      { layer: 'L0', desc: 'Selected anchor / principal customer',    total: 1,   etb: 1,   ntb: 0,   casa: 45,  trxVol: 320 },
+      { layer: 'L1', desc: 'Direct counterparties of anchor',         total: 120, etb: 55,  ntb: 65,  casa: 90,  trxVol: 1100 },
+      { layer: 'L2', desc: 'Counterparties connected through L1',     total: 420, etb: 150, ntb: 270, casa: 65,  trxVol: 850 },
+      { layer: 'L3', desc: 'Extended ecosystem connected through L2', total: 705, etb: 225, ntb: 480, casa: 30,  trxVol: 450 },
     ],
     top10Collection: {
       etb: [
@@ -585,17 +585,17 @@ export const ecosystemData = {
     ecosystemType: 'Consumer Goods — Personal Care & Food',
     anchor: 'PT Kino Indonesia Tbk',
     summary: {
-      totalMembers: 684,
-      etbMembers: 210,
-      ntbMembers: 474,
-      casaBalance: 92,
-      transactionVolume: 1100,
+      totalMembers: 980,
+      etbMembers: 315,
+      ntbMembers: 665,
+      casaBalance: 145,       // IDR Bn — from EcoWeb
+      transactionVolume: 1900, // IDR Bn (1.9 Tn) — from EcoWeb
     },
     layers: [
-      { layer: 'L0', desc: 'Selected anchor / principal customer',     total: 1,   etb: 1,   ntb: 0,   casa: 18,  trxVol: 110 },
-      { layer: 'L1', desc: 'Direct counterparties of anchor',          total: 68,  etb: 28,  ntb: 40,  casa: 34,  trxVol: 420 },
-      { layer: 'L2', desc: 'Counterparties connected through L1',      total: 215, etb: 72,  ntb: 143, casa: 28,  trxVol: 380 },
-      { layer: 'L3', desc: 'Extended ecosystem connected through L2',  total: 400, etb: 109, ntb: 291, casa: 12,  trxVol: 190 },
+      { layer: 'L0', desc: 'Selected anchor / principal customer',    total: 1,   etb: 1,   ntb: 0,   casa: 35,  trxVol: 210 },
+      { layer: 'L1', desc: 'Direct counterparties of anchor',         total: 95,  etb: 40,  ntb: 55,  casa: 70,  trxVol: 850 },
+      { layer: 'L2', desc: 'Counterparties connected through L1',     total: 335, etb: 110, ntb: 225, casa: 50,  trxVol: 650 },
+      { layer: 'L3', desc: 'Extended ecosystem connected through L2', total: 550, etb: 165, ntb: 385, casa: 25,  trxVol: 400 },
     ],
     top10Collection: {
       etb: [

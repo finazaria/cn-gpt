@@ -18,10 +18,10 @@ const STREAM_DURATION = {
 };
 
 export default function App() {
-  // ── State ────────────────────────────────────────────────────────────────
-  const [selectedCompany, setSelectedCompany] = useState(null); // { id, name, shortName, initials }
+  // Always start with selector shown — first screen is always company picker
+  const [selectedCompany, setSelectedCompany] = useState(null);
   const [companyData, setCompanyData] = useState(null);
-  const [showSelector, setShowSelector] = useState(false);
+  const [showSelector, setShowSelector] = useState(true);
 
   const {
     sessions, activeId, activeSession,
@@ -39,24 +39,11 @@ export default function App() {
   }, [activeSession?.messages?.length, activeId]);
 
   // ── Company selection flow ───────────────────────────────────────────────
-  // On initial load, check localStorage for last selected company
-  useEffect(() => {
-    const lastCompanyId = localStorage.getItem('cn_gpt_last_company');
-    if (lastCompanyId) {
-      const company = COMPANY_REGISTRY.find(c => c.id === lastCompanyId);
-      if (company) {
-        setSelectedCompany(company);
-        setCompanyData(getCompanyData(lastCompanyId));
-      }
-    }
-  }, []);
-
+  // Each company selection = fresh session (mirrors real product behavior)
   const handleSelectCompany = useCallback((company) => {
     setSelectedCompany(company);
     setCompanyData(getCompanyData(company.id));
-    localStorage.setItem('cn_gpt_last_company', company.id);
     setShowSelector(false);
-    // Start a fresh session for the new company
     newSession();
   }, [newSession]);
 
