@@ -91,6 +91,13 @@ export default function App() {
     updateMessage(msgId, { feedback: feedbackType, feedbackComment: comment });
   }, [updateMessage]);
 
+  // Suggested pill: new session → send prompt for current company only
+  const handleSuggestedPill = useCallback((prompt) => {
+    if (streaming || !selectedCompany) return;
+    newSession();
+    Promise.resolve().then(() => handleSend(prompt));
+  }, [streaming, selectedCompany, newSession, handleSend]);
+
   // ── Render ───────────────────────────────────────────────────────────────
   const messages = activeSession?.messages || [];
   const showWelcome = messages.length === 0 && selectedCompany && !showSelector;
@@ -176,9 +183,9 @@ export default function App() {
         {!showCompanySelector && (
           <ChatInput
             onSend={handleSend}
+            onSuggestedPill={handleSuggestedPill}
             disabled={streaming}
             company={selectedCompany}
-            onNewChat={newSession}
           />
         )}
       </div>

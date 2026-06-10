@@ -219,7 +219,7 @@ function UploadModal({ onClose, onUpload }) {
   );
 }
 
-export default function ChatInput({ onSend, disabled, company, onNewChat }) {
+export default function ChatInput({ onSend, onSuggestedPill, disabled, company }) {
   const [value, setValue] = useState('');
   const [attachedFiles, setAttachedFiles] = useState([]);
   const [showUpload, setShowUpload] = useState(false);
@@ -244,12 +244,10 @@ export default function ChatInput({ onSend, disabled, company, onNewChat }) {
     if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handleSend(); }
   };
 
-  // Suggested pill click: start a new chat session, then send the prompt
+  // Pill click — delegates entirely to App.jsx which handles session + send atomically
   const handleSuggestedClick = (prompt) => {
     if (!company || disabled) return;
-    if (onNewChat) onNewChat();
-    // Small delay so session is created before message is added
-    setTimeout(() => onSend(prompt), 50);
+    onSuggestedPill?.(prompt);
   };
 
   const placeholder = company
