@@ -18,8 +18,12 @@ const SUGGESTED = [
 function SuggestedPills({ company, onSend }) {
   if (!company) return null;
   return (
-    <div style={{ marginBottom: 8 }}>
-      <div style={{ fontSize: 10, fontWeight: 600, color: 'var(--text-3)', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 6 }}>
+    <div style={{ marginBottom: 10 }}>
+      <div style={{
+        fontSize: 10, fontWeight: 600, color: 'var(--text-3)',
+        textTransform: 'uppercase', letterSpacing: '0.06em',
+        marginBottom: 7,
+      }}>
         SUGGESTED QUESTIONS
       </div>
       <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
@@ -253,7 +257,12 @@ export default function ChatInput({ onSend, disabled, company, onNewChat }) {
     : 'Select a company to begin...';
 
   return (
-    <div style={{ padding: '0 20px 18px', background: '#fff', borderTop: '1px solid var(--border)' }}>
+    <div style={{
+      padding: '12px 20px 16px',
+      background: '#fff',
+      borderTop: '1px solid var(--border)',
+      boxShadow: '0 -2px 8px rgba(0,0,0,0.04)',
+    }}>
       <div style={{ maxWidth: 820, margin: '0 auto' }}>
         {/* Suggested Questions — always visible above chatbox */}
         <SuggestedPills company={company} onSend={handleSuggestedClick}/>
@@ -328,7 +337,7 @@ export default function ChatInput({ onSend, disabled, company, onNewChat }) {
             <Send size={15}/>
           </button>
         </div>
-        <div style={{ fontSize: 10, color: 'var(--text-3)', marginTop: 6, textAlign: 'center' }}>
+        <div style={{ fontSize: 10, color: 'var(--text-3)', marginTop: 8, textAlign: 'center', letterSpacing: '0.01em' }}>
           CN-GPT · Data Analytics Agent · Business Banking Pilot · Powered by CIMB Niaga AI CoE
         </div>
       </div>

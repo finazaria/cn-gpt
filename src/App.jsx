@@ -156,7 +156,7 @@ export default function App() {
         ) : showWelcome ? (
           <WelcomeScreen onSend={handleSend} company={selectedCompany}/>
         ) : (
-          <div style={{ flex: 1, overflowY: 'auto', padding: '24px 24px 8px', background: 'var(--bg-2)' }}>
+          <div style={{ flex: 1, overflowY: 'auto', padding: '24px 24px 24px', background: 'var(--bg-2)' }}>
             <div style={{ maxWidth: 820, margin: '0 auto' }}>
               {messages.map((msg) => (
                 <ChatMessage
