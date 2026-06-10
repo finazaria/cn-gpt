@@ -56,14 +56,16 @@ export const astraData = {
   company: {
     name: 'PT Astra Internasional Tbk',
     cif: '0012345678',
-    industry: 'Fast-Moving Consumer Goods (FMCG)',
-    group: 'ABC Group',
+    industry: 'Automotive — 4 Wheeler',
+    group: 'Astra Group',
     segment: 'Corporate Banking',
     th: 'Budi Santoso',
     rm: 'Dewi Rahayu',
     cifStatus: 'ACTIVE',
     etb: true,
-    since: '2018',
+    since: '2008',
+    moca: 'NOCA',           // MOCA | OCA | NOCA
+    bizChannel: 'ACTIVE',   // ACTIVE | NON ACTIVE
   },
   fundingLoan: {
     fundingAvg: 38700,
@@ -129,35 +131,30 @@ export const astraData = {
       { month: 'Dec', incoming: 12400, outgoing: 7600, pct: 38 },
     ],
     topOutflow: [
-      { rank: 1, name: 'BCA', amount: 3200, pct: 42, type: 'Transfer' },
-      { rank: 2, name: 'Mandiri', amount: 2100, pct: 28, type: 'Payment' },
-      { rank: 3, name: 'BNI', amount: 1400, pct: 18, type: 'Transfer' },
-      { rank: 4, name: 'Others', amount: 900, pct: 12, type: 'Various' },
+      { rank: 1, name: 'BCA', amount: 3200, pct: 42 },
+      { rank: 2, name: 'Mandiri', amount: 2100, pct: 28 },
+      { rank: 3, name: 'BNI', amount: 1400, pct: 18 },
+      { rank: 4, name: 'Others', amount: 900, pct: 12 },
     ],
     topInflow: [
-      { rank: 1, name: 'BCA', amount: 4100, pct: 33, type: 'Collection' },
-      { rank: 2, name: 'Internal CIMB', amount: 3800, pct: 31, type: 'Transfer' },
-      { rank: 3, name: 'Mandiri', amount: 2700, pct: 22, type: 'Payment' },
-      { rank: 4, name: 'Others', amount: 1800, pct: 14, type: 'Various' },
+      { rank: 1, name: 'BCA', amount: 4100, pct: 33 },
+      { rank: 2, name: 'CIMB Niaga', amount: 3800, pct: 31 },
+      { rank: 3, name: 'Mandiri', amount: 2700, pct: 22 },
+      { rank: 4, name: 'Others', amount: 1800, pct: 14 },
     ],
   },
   products: {
-    total: 8,
+    total: 3,
     active: [
-      { name: 'CASA (Giro & Tabungan)', category: 'Funding', since: '2018', revenue: 1100 },
-      { name: 'Time Deposit', category: 'Funding', since: '2019', revenue: 420 },
-      { name: 'Term Loan', category: 'Lending', since: '2018', revenue: 1600 },
-      { name: 'Trade Finance (LC/SKBDN)', category: 'Lending', since: '2020', revenue: 400 },
-      { name: 'FX Forward', category: 'Treasury', since: '2021', revenue: 380 },
-      { name: 'BizChannel', category: 'Transactional', since: '2019', revenue: 180 },
-      { name: 'Payroll', category: 'Transactional', since: '2020', revenue: 90 },
-      { name: 'Virtual Account', category: 'Transactional', since: '2022', revenue: 30 },
+      { name: 'CA IDR (CASA)', category: 'Funding', since: '2008' },
+      { name: 'Working Capital', category: 'Lending', since: '2008' },
+      { name: 'BizChannel — Fund Transfer', category: 'Digital Channel', since: '2010' },
     ],
     inactive: [
-      { name: 'Cash Management / Pooling', category: 'Transactional', potential: 420 },
-      { name: 'Supply Chain Finance', category: 'Lending', potential: 320 },
-      { name: 'Bancassurance', category: 'Insurance', potential: 180 },
-      { name: 'FX Option / Hedging', category: 'Treasury', potential: 150 },
+      { name: 'Trade Finance (LC/SKBDN)' },
+      { name: 'FX (All Channels)' },
+      { name: 'Time Deposit' },
+      { name: 'Virtual Account (VA)' },
     ],
   },
   findings: [
@@ -214,14 +211,16 @@ export const kinoData = {
   company: {
     name: 'PT Kino Indonesia Tbk',
     cif: '0023456789',
-    industry: 'Consumer Goods — Personal Care & Food',
+    industry: 'Fast-Moving Consumer Goods (FMCG) — Manufacturing',
     group: 'Kino Group',
     segment: 'Corporate Banking',
     th: 'Reza Firmansyah',
     rm: 'Sari Puspita',
     cifStatus: 'ACTIVE',
     etb: true,
-    since: '2020',
+    since: '2004',
+    moca: 'MOCA',           // MOCA | OCA | NOCA
+    bizChannel: 'ACTIVE',   // ACTIVE | NON ACTIVE
   },
   fundingLoan: {
     fundingAvg: 18400,
@@ -287,33 +286,33 @@ export const kinoData = {
       { month: 'Dec', incoming: 6800, outgoing: 3100, pct: 31 },
     ],
     topOutflow: [
-      { rank: 1, name: 'BCA', amount: 1400, pct: 45, type: 'Transfer' },
-      { rank: 2, name: 'BRI', amount: 900, pct: 29, type: 'Payment' },
-      { rank: 3, name: 'BNI', amount: 500, pct: 16, type: 'Transfer' },
-      { rank: 4, name: 'Others', amount: 300, pct: 10, type: 'Various' },
+      { rank: 1, name: 'BCA', amount: 1400, pct: 45 },
+      { rank: 2, name: 'BRI', amount: 900, pct: 29 },
+      { rank: 3, name: 'BNI', amount: 500, pct: 16 },
+      { rank: 4, name: 'Others', amount: 300, pct: 10 },
     ],
     topInflow: [
-      { rank: 1, name: 'Internal CIMB', amount: 2800, pct: 41, type: 'Transfer' },
-      { rank: 2, name: 'BCA', amount: 2200, pct: 32, type: 'Collection' },
-      { rank: 3, name: 'Mandiri', amount: 1100, pct: 16, type: 'Payment' },
-      { rank: 4, name: 'Others', amount: 700, pct: 11, type: 'Various' },
+      { rank: 1, name: 'CIMB Niaga', amount: 2800, pct: 41 },
+      { rank: 2, name: 'BCA', amount: 2200, pct: 32 },
+      { rank: 3, name: 'Mandiri', amount: 1100, pct: 16 },
+      { rank: 4, name: 'Others', amount: 700, pct: 11 },
     ],
   },
   products: {
     total: 6,
     active: [
-      { name: 'CASA (Giro & Tabungan)', category: 'Funding', since: '2020', revenue: 520 },
-      { name: 'Time Deposit', category: 'Funding', since: '2021', revenue: 180 },
-      { name: 'Term Loan', category: 'Lending', since: '2020', revenue: 680 },
-      { name: 'Working Capital Loan', category: 'Lending', since: '2022', revenue: 180 },
-      { name: 'BizChannel', category: 'Transactional', since: '2021', revenue: 120 },
-      { name: 'Payroll', category: 'Transactional', since: '2022', revenue: 80 },
+      { name: 'CA IDR (CASA)', category: 'Funding', since: '2004' },
+      { name: 'Working Capital', category: 'Lending', since: '2004' },
+      { name: 'FX (All Channels)', category: 'Treasury', since: '2012' },
+      { name: 'BizChannel — Fund Transfer', category: 'Digital Channel', since: '2010' },
+      { name: 'BizChannel — eTax Payment', category: 'Digital Channel', since: '2015' },
+      { name: 'Fund Transfer via Branch', category: 'Transactional', since: '2004' },
     ],
     inactive: [
-      { name: 'Trade Finance (LC/SKBDN)', category: 'Lending', potential: 280 },
-      { name: 'Cash Management / Pooling', category: 'Transactional', potential: 190 },
-      { name: 'FX Forward', category: 'Treasury', potential: 140 },
-      { name: 'Bancassurance', category: 'Insurance', potential: 90 },
+      { name: 'Trade Finance (LC/SKBDN)' },
+      { name: 'Time Deposit' },
+      { name: 'Virtual Account (VA)' },
+      { name: 'Payroll' },
     ],
   },
   findings: [
@@ -370,14 +369,16 @@ export const indofoodData = {
   company: {
     name: 'PT Indofood Sukses Makmur Tbk',
     cif: '0034567890',
-    industry: 'Food & Beverage Manufacturing',
+    industry: 'Fast-Moving Consumer Goods (FMCG) — Manufacturing',
     group: 'Salim Group',
     segment: 'Corporate Banking',
     th: 'Hartono Wijaya',
     rm: 'Rina Kusuma',
     cifStatus: 'ACTIVE',
     etb: true,
-    since: '2016',
+    since: '2003',
+    moca: 'OCA',            // MOCA | OCA | NOCA
+    bizChannel: 'NON ACTIVE', // ACTIVE | NON ACTIVE
   },
   fundingLoan: {
     fundingAvg: 72300,
@@ -443,36 +444,30 @@ export const indofoodData = {
       { month: 'Dec', incoming: 28400, outgoing: 14200, pct: 33 },
     ],
     topOutflow: [
-      { rank: 1, name: 'BCA', amount: 5800, pct: 41, type: 'Transfer' },
-      { rank: 2, name: 'Mandiri', amount: 4200, pct: 30, type: 'Payment' },
-      { rank: 3, name: 'BNI', amount: 2600, pct: 18, type: 'Transfer' },
-      { rank: 4, name: 'Others', amount: 1600, pct: 11, type: 'Various' },
+      { rank: 1, name: 'BCA', amount: 5800, pct: 41 },
+      { rank: 2, name: 'Mandiri', amount: 4200, pct: 30 },
+      { rank: 3, name: 'BNI', amount: 2600, pct: 18 },
+      { rank: 4, name: 'Others', amount: 1600, pct: 11 },
     ],
     topInflow: [
-      { rank: 1, name: 'Internal CIMB', amount: 9800, pct: 34, type: 'Transfer' },
-      { rank: 2, name: 'BCA', amount: 8600, pct: 30, type: 'Collection' },
-      { rank: 3, name: 'Mandiri', amount: 6200, pct: 22, type: 'Payment' },
-      { rank: 4, name: 'Others', amount: 3800, pct: 14, type: 'Various' },
+      { rank: 1, name: 'CIMB Niaga', amount: 9800, pct: 34 },
+      { rank: 2, name: 'BCA', amount: 8600, pct: 30 },
+      { rank: 3, name: 'Mandiri', amount: 6200, pct: 22 },
+      { rank: 4, name: 'Others', amount: 3800, pct: 14 },
     ],
   },
   products: {
-    total: 9,
+    total: 3,
     active: [
-      { name: 'CASA (Giro & Tabungan)', category: 'Funding', since: '2016', revenue: 2100 },
-      { name: 'Time Deposit', category: 'Funding', since: '2016', revenue: 980 },
-      { name: 'Term Loan', category: 'Lending', since: '2016', revenue: 3200 },
-      { name: 'Revolving Credit Facility', category: 'Lending', since: '2018', revenue: 1400 },
-      { name: 'Trade Finance (LC/SKBDN)', category: 'Lending', since: '2017', revenue: 1200 },
-      { name: 'FX Forward', category: 'Treasury', since: '2017', revenue: 620 },
-      { name: 'BizChannel', category: 'Transactional', since: '2016', revenue: 180 },
-      { name: 'Payroll', category: 'Transactional', since: '2016', revenue: 90 },
-      { name: 'Virtual Account', category: 'Transactional', since: '2019', revenue: 30 },
+      { name: 'CA IDR (CASA)', category: 'Funding', since: '2003' },
+      { name: 'Investment Loan', category: 'Lending', since: '2003' },
+      { name: 'Fund Transfer via Branch', category: 'Transactional', since: '2003' },
     ],
     inactive: [
-      { name: 'Cash Management / Pooling', category: 'Transactional', potential: 680 },
-      { name: 'Supply Chain Finance', category: 'Lending', potential: 540 },
-      { name: 'FX Option / Hedging', category: 'Treasury', potential: 290 },
-      { name: 'Bancassurance', category: 'Insurance', potential: 150 },
+      { name: 'BizChannel — Fund Transfer' },
+      { name: 'Working Capital' },
+      { name: 'Trade Finance (LC/SKBDN)' },
+      { name: 'FX (All Channels)' },
     ],
   },
   findings: [
@@ -537,15 +532,18 @@ export const ecosystemData = {
     summary: {
       totalMembers: 1245,
       etbMembers: 430,
-      ntbMembers: 815,
-      casaBalance: 185,       // IDR Bn — from EcoWeb
-      transactionVolume: 2400, // IDR Bn (2.4 Tn) — from EcoWeb
+      nonCimbMembers: 815,
+      mocaCount: 280,
+      nonMocaCount: 150,
+      casaBalance: 185,      // IDR Bn
+      revenue: 142,          // IDR Bn
+      asOf: 'Apr 2026',
     },
     layers: [
-      { layer: 'L0', desc: 'Selected anchor / principal customer',    total: 1,   etb: 1,   ntb: 0,   casa: 45,  trxVol: 320 },
-      { layer: 'L1', desc: 'Direct counterparties of anchor',         total: 120, etb: 55,  ntb: 65,  casa: 90,  trxVol: 1100 },
-      { layer: 'L2', desc: 'Counterparties connected through L1',     total: 420, etb: 150, ntb: 270, casa: 65,  trxVol: 850 },
-      { layer: 'L3', desc: 'Extended ecosystem connected through L2', total: 705, etb: 225, ntb: 480, casa: 30,  trxVol: 450 },
+      { layer: 'L0', desc: 'Anchor / principal customer',           total: 1,   etb: 1,   nonCimb: 0,   moca: 0,   nonMoca: 1,   casa: 45,   revenue: 12 },
+      { layer: 'L1', desc: 'Direct counterparties of anchor',       total: 120, etb: 55,  nonCimb: 65,  moca: 42,  nonMoca: 78,  casa: 90,   revenue: 48 },
+      { layer: 'L2', desc: 'Counterparties connected through L1',   total: 420, etb: 150, nonCimb: 270, moca: 98,  nonMoca: 322, casa: 65,   revenue: 52 },
+      { layer: 'L3', desc: 'Extended ecosystem via L2',             total: 705, etb: 225, nonCimb: 480, moca: 140, nonMoca: 565, casa: 30,   revenue: 30 },
     ],
     top10Collection: {
       etb: [
@@ -585,17 +583,20 @@ export const ecosystemData = {
     ecosystemType: 'Consumer Goods — Personal Care & Food',
     anchor: 'PT Kino Indonesia Tbk',
     summary: {
-      totalMembers: 980,
-      etbMembers: 315,
-      ntbMembers: 665,
-      casaBalance: 145,       // IDR Bn — from EcoWeb
-      transactionVolume: 1900, // IDR Bn (1.9 Tn) — from EcoWeb
+      totalMembers: 496,
+      etbMembers: 311,
+      nonCimbMembers: 185,   // renamed from ntbMembers
+      mocaCount: 125,
+      nonMocaCount: 371,
+      casaBalance: 5700,     // IDR Bn (5.7 Tn) — from EcoWeb Apr 2026
+      revenue: 78,           // IDR Bn — from EcoWeb Apr 2026
+      asOf: 'Apr 2026',
     },
     layers: [
-      { layer: 'L0', desc: 'Selected anchor / principal customer',    total: 1,   etb: 1,   ntb: 0,   casa: 35,  trxVol: 210 },
-      { layer: 'L1', desc: 'Direct counterparties of anchor',         total: 95,  etb: 40,  ntb: 55,  casa: 70,  trxVol: 850 },
-      { layer: 'L2', desc: 'Counterparties connected through L1',     total: 335, etb: 110, ntb: 225, casa: 50,  trxVol: 650 },
-      { layer: 'L3', desc: 'Extended ecosystem connected through L2', total: 550, etb: 165, ntb: 385, casa: 25,  trxVol: 400 },
+      { layer: 'L0', desc: 'Anchor / principal customer',           total: 1,   etb: 1,   nonCimb: 0,   moca: 1,  nonMoca: 0,   casa: 5,    revenue: 3 },
+      { layer: 'L1', desc: 'Direct counterparties of anchor',       total: 33,  etb: 21,  nonCimb: 12,  moca: 16, nonMoca: 17,  casa: 118,  revenue: 6 },
+      { layer: 'L2', desc: 'Counterparties connected through L1',   total: 74,  etb: 42,  nonCimb: 32,  moca: 17, nonMoca: 57,  casa: 1600, revenue: 31 },
+      { layer: 'L3', desc: 'Extended ecosystem via L2',             total: 388, etb: 247, nonCimb: 141, moca: 91, nonMoca: 297, casa: 4000, revenue: 38 },
     ],
     top10Collection: {
       etb: [
@@ -632,20 +633,23 @@ export const ecosystemData = {
   },
 
   indofood: {
-    ecosystemType: 'Food & Beverage Manufacturing',
+    ecosystemType: 'Fast-Moving Consumer Goods (FMCG) — Manufacturing',
     anchor: 'PT Indofood Sukses Makmur Tbk',
     summary: {
       totalMembers: 2180,
       etbMembers: 720,
-      ntbMembers: 1460,
-      casaBalance: 420,
-      transactionVolume: 6800,
+      nonCimbMembers: 1460,
+      mocaCount: 380,
+      nonMocaCount: 340,
+      casaBalance: 420,      // IDR Bn
+      revenue: 285,          // IDR Bn
+      asOf: 'Apr 2026',
     },
     layers: [
-      { layer: 'L0', desc: 'Selected anchor / principal customer',     total: 1,    etb: 1,   ntb: 0,    casa: 72,  trxVol: 840 },
-      { layer: 'L1', desc: 'Direct counterparties of anchor',          total: 280,  etb: 110, ntb: 170,  casa: 168, trxVol: 2600 },
-      { layer: 'L2', desc: 'Counterparties connected through L1',      total: 790,  etb: 280, ntb: 510,  casa: 124, trxVol: 2100 },
-      { layer: 'L3', desc: 'Extended ecosystem connected through L2',  total: 1109, etb: 329, ntb: 780,  casa: 56,  trxVol: 1260 },
+      { layer: 'L0', desc: 'Anchor / principal customer',           total: 1,    etb: 1,   nonCimb: 0,   moca: 0,  nonMoca: 1,   casa: 72,  revenue: 18 },
+      { layer: 'L1', desc: 'Direct counterparties of anchor',       total: 280,  etb: 110, nonCimb: 170, moca: 95, nonMoca: 185, casa: 168, revenue: 86 },
+      { layer: 'L2', desc: 'Counterparties connected through L1',   total: 790,  etb: 280, nonCimb: 510, moca: 168, nonMoca: 622, casa: 124, revenue: 112 },
+      { layer: 'L3', desc: 'Extended ecosystem via L2',             total: 1109, etb: 329, nonCimb: 780, moca: 117, nonMoca: 992, casa: 56,  revenue: 69 },
     ],
     top10Collection: {
       etb: [

@@ -173,3 +173,23 @@ export function LeakageDonut({ incoming, outgoing }) {
     </ResponsiveContainer>
   );
 }
+
+// ─── Ending Balance Only Bar Chart (v5 revision: avg removed) ───────────────
+export function EndingBalanceBarChart({ data, tooltipContent }) {
+  const fmtAxis = (v) => {
+    if (v >= 1000000) return `${(v/1000000).toFixed(0)}Tn`;
+    if (v >= 1000) return `${(v/1000).toFixed(0)}Bn`;
+    return `${v}Mn`;
+  };
+  return (
+    <ResponsiveContainer width="100%" height={220}>
+      <BarChart data={data} margin={{ top: 4, right: 8, left: 0, bottom: 0 }}>
+        <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
+        <XAxis dataKey="month" tick={{ fontSize: 10, fill: '#9aa3b2' }} />
+        <YAxis tick={{ fontSize: 10, fill: '#9aa3b2' }} tickFormatter={fmtAxis} />
+        <Tooltip content={tooltipContent}/>
+        <Bar dataKey="end" name="Ending Balance" fill={RED} radius={[3,3,0,0]} />
+      </BarChart>
+    </ResponsiveContainer>
+  );
+}

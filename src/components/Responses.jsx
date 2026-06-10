@@ -3,12 +3,14 @@ import {
   TrendingUp, TrendingDown, AlertTriangle, CheckCircle,
   ArrowUpRight, ArrowDownRight, Package, Zap, Target,
   Users, Building2, Calendar, Star, ChevronRight, ShieldX,
-  Network, ExternalLink, ChevronDown,
+  Network, ExternalLink, ChevronDown, Wifi, WifiOff, Activity,
 } from 'lucide-react';
 import { ecosystemData, ECOWEB_URL } from '../data/mockData.js';
+import { fmtIDR, fmtIDRBn, fmtPct } from '../utils/format.js';
 import {
   FundingTrendChart, LoanTrendChart, IncomeTrendChart,
   IncomePieChart, LeakageTrendChart, LeakageDonut,
+  EndingBalanceBarChart,
 } from './Charts.jsx';
 
 // ─── Shared UI primitives ────────────────────────────────────────────────────
@@ -102,6 +104,39 @@ export function AccessDenied({ attemptedCompany }) {
 // ═══════════════════════════════════════════════════════════════════════════
 // Q1: Company Overview
 // ═══════════════════════════════════════════════════════════════════════════
+
+// MOCA badge helper
+function MocaBadge({ moca }) {
+  const map = {
+    MOCA:  { label: 'MOCA', bg: 'var(--green-bg)', color: 'var(--green)', border: 'var(--green-border)', title: 'Main Operating Account' },
+    OCA:   { label: 'OCA',  bg: 'var(--amber-bg)', color: 'var(--amber)', border: 'var(--amber-border)', title: 'Operating Account' },
+    NOCA:  { label: 'NOCA', bg: 'var(--red-neg-bg)', color: 'var(--red-neg)', border: 'var(--red-neg-border)', title: 'Non Operating Account' },
+  };
+  const s = map[moca] || map.NOCA;
+  return (
+    <span title={s.title} style={{
+      fontSize: 10, fontWeight: 600, padding: '2px 8px', borderRadius: 20,
+      background: s.bg, color: s.color, border: `1px solid ${s.border}`,
+    }}>{s.label}</span>
+  );
+}
+
+// BizChannel badge helper
+function BizChannelBadge({ status }) {
+  const active = status === 'ACTIVE';
+  return (
+    <span title="BizChannel Digital Banking" style={{
+      fontSize: 10, fontWeight: 600, padding: '2px 8px', borderRadius: 20,
+      background: active ? 'var(--blue-bg)' : 'var(--bg-3)',
+      color: active ? 'var(--blue)' : 'var(--text-3)',
+      border: `1px solid ${active ? 'var(--blue-border)' : 'var(--border)'}`,
+      display: 'inline-flex', alignItems: 'center', gap: 4,
+    }}>
+      BizChannel {status}
+    </span>
+  );
+}
+
 export function CompanyOverview({ progress, companyData }) {
   const show = (t) => progress >= t;
   const { company, fundingLoan, income, products, findings } = companyData;
@@ -121,11 +156,23 @@ export function CompanyOverview({ progress, companyData }) {
                 <div style={{ fontSize: 12, color: 'var(--text-2)', marginTop: 2 }}>
                   CIF: {company.cif} &nbsp;·&nbsp; {company.segment}
                 </div>
-                <div style={{ display: 'flex', gap: 6, marginTop: 6, flexWrap: 'wrap' }}>
+                {/* Tag order (UI/UX best practice: identity → status → behaviour → engagement → tenure) */}
+                <div style={{ display: 'flex', gap: 6, marginTop: 7, flexWrap: 'wrap', alignItems: 'center' }}>
+                  {/* 1. ETB/NTB — relationship identity */}
                   <Badge color="green">ETB</Badge>
-                  <Badge color="green">CIF Active</Badge>
-                  <Badge color="blue">{company.industry.split(' ')[0]}</Badge>
-                  <Badge color="default">Since {company.since}</Badge>
+                  {/* 2. CIF status — account health */}
+                  <Badge color={company.cifStatus === 'ACTIVE' ? 'green' : 'red'}>
+                    CIF {company.cifStatus}
+                  </Badge>
+                  {/* 3. MOCA — transactional behaviour */}
+                  <MocaBadge moca={company.moca}/>
+                  {/* 4. BizChannel — digital engagement */}
+                  <BizChannelBadge status={company.bizChannel}/>
+                  {/* 5. Customer since — tenure (last, least urgent) */}
+                  <span style={{
+                    fontSize: 10, fontWeight: 500, padding: '2px 8px', borderRadius: 20,
+                    background: 'var(--bg-3)', color: 'var(--text-2)', border: '1px solid var(--border)',
+                  }}>Customer Since {company.since}</span>
                 </div>
               </div>
             </div>
@@ -146,9 +193,9 @@ export function CompanyOverview({ progress, companyData }) {
         <div className="fade-in">
           <SectionTitle icon={TrendingUp}>Key Financial Metrics</SectionTitle>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 10 }}>
-            <MetricCard label="Avg Funding Balance" value={`Rp ${(fundingLoan.fundingAvg/1000).toFixed(1)}B`} sub={`+${fundingLoan.fundingYoY}% YoY`} trend="up"/>
-            <MetricCard label="OS Loan Balance" value={`Rp ${(fundingLoan.loanOS/1000).toFixed(1)}B`} sub={`${fundingLoan.loanYoY}% YoY`} trend={fundingLoan.loanYoY >= 0 ? 'up' : 'down'}/>
-            <MetricCard label="Total Income (YTD)" value={`Rp ${(income.total/1000).toFixed(1)}B`} sub={`+${income.yoy}% YoY`} trend="up"/>
+            <MetricCard label="Avg Funding Balance" value={fmtIDR(fundingLoan.fundingAvg)} sub={`+${fundingLoan.fundingYoY}% YoY`} trend="up"/>
+            <MetricCard label="OS Loan Balance" value={fmtIDR(fundingLoan.loanOS)} sub={`${fundingLoan.loanYoY}% YoY`} trend={fundingLoan.loanYoY >= 0 ? 'up' : 'down'}/>
+            <MetricCard label="Total Income (YTD)" value={fmtIDR(income.total)} sub={`+${income.yoy}% YoY`} trend="up"/>
           </div>
         </div>
       )}
@@ -156,9 +203,9 @@ export function CompanyOverview({ progress, companyData }) {
         <Card className="fade-in">
           <SectionTitle icon={Target}>Income Breakdown (Dec 2024)</SectionTitle>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 10, marginBottom: 12 }}>
-            <MetricCard label="Funding NII" value={`Rp ${income.fundingNII.toLocaleString()}M`} sub={`${Math.round(income.fundingNII/income.total*100)}% of total`}/>
-            <MetricCard label="Loan NII" value={`Rp ${income.loanNII.toLocaleString()}M`} sub={`${Math.round(income.loanNII/income.total*100)}% of total`}/>
-            <MetricCard label="NOII" value={`Rp ${income.noii.toLocaleString()}M`} sub={`${Math.round(income.noii/income.total*100)}% of total`}/>
+            <MetricCard label="Funding NII" value={fmtIDR(income.fundingNII)} sub={`${Math.round(income.fundingNII/income.total*100)}% of total`}/>
+            <MetricCard label="Loan NII" value={fmtIDR(income.loanNII)} sub={`${Math.round(income.loanNII/income.total*100)}% of total`}/>
+            <MetricCard label="NOII" value={fmtIDR(income.noii)} sub={`${Math.round(income.noii/income.total*100)}% of total`}/>
           </div>
           <IncomePieChart fundingNII={income.fundingNII} loanNII={income.loanNII} noii={income.noii}/>
         </Card>
@@ -220,16 +267,17 @@ export function FundingLendingTrend({ progress, companyData }) {
       {show(0.05) && (
         <div className="fade-in">
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 10 }}>
-            <MetricCard label="Avg Funding Balance" value={`Rp ${(fundingLoan.fundingAvg/1000).toFixed(1)}B`} sub={`+${fundingLoan.fundingYoY}% YoY`} trend="up"/>
-            <MetricCard label="Ending Funding Balance" value={`Rp ${(fundingLoan.fundingEnd/1000).toFixed(1)}B`} sub="Dec 2024" trend="up"/>
+            <MetricCard label="Ending Funding Balance" value={fmtIDR(fundingLoan.fundingEnd)} sub={`+${fundingLoan.fundingYoY}% YoY`} trend="up"/>
+            <MetricCard label="Avg Funding Balance" value={fmtIDR(fundingLoan.fundingAvg)} sub="Dec 2026"/>
             <MetricCard label="Funding vs Loan Ratio" value={`${Math.round(fundingLoan.fundingAvg/fundingLoan.loanOS*100)}:100`} sub="CASA to Loan coverage"/>
           </div>
         </div>
       )}
       {show(0.2) && (
         <Card className="fade-in">
-          <SectionTitle icon={TrendingUp}>Funding Balance Trend (Jan – Dec 2024)</SectionTitle>
-          <FundingTrendChart data={fundingLoan.fundingTrend}/>
+          <SectionTitle icon={TrendingUp}>Funding Balance Trend (Jan – Dec 2026)</SectionTitle>
+          {/* Ending balance only chart — avg removed per revision */}
+          <EndingOnlyFundingChart data={fundingLoan.fundingTrend}/>
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 8, marginTop: 12 }}>
             {[{ label: '3M Change', value: '+2.8%' }, { label: '6M Change', value: '+4.1%' }, { label: 'YoY Change', value: `+${fundingLoan.fundingYoY}%` }].map((m, i) => (
               <div key={i} style={{ textAlign: 'center', padding: '8px', background: 'var(--green-bg)', borderRadius: 8, border: '1px solid var(--green-border)' }}>
@@ -243,15 +291,15 @@ export function FundingLendingTrend({ progress, companyData }) {
       {show(0.5) && (
         <div className="fade-in">
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 10 }}>
-            <MetricCard label="OS Loan Balance" value={`Rp ${(fundingLoan.loanOS/1000).toFixed(1)}B`} sub={`${fundingLoan.loanYoY}% YoY`} trend={fundingLoan.loanYoY >= 0 ? 'up' : 'down'}/>
-            <MetricCard label="Average Loan" value={`Rp ${(fundingLoan.loanAvg/1000).toFixed(1)}B`} sub="Dec 2024"/>
+            <MetricCard label="OS Loan Balance" value={fmtIDR(fundingLoan.loanOS)} sub={`${fundingLoan.loanYoY}% YoY`} trend={fundingLoan.loanYoY >= 0 ? 'up' : 'down'}/>
+            <MetricCard label="Average Loan" value={fmtIDR(fundingLoan.loanAvg)} sub="Dec 2026"/>
             <MetricCard label="Loan vs CASA" value={`${Math.round(fundingLoan.loanOS/fundingLoan.fundingAvg*100)}%`} sub="Loan/CASA multiplier"/>
           </div>
         </div>
       )}
       {show(0.65) && (
         <Card className="fade-in">
-          <SectionTitle icon={TrendingDown}>Loan Balance Trend (Jan – Dec 2024)</SectionTitle>
+          <SectionTitle icon={TrendingDown}>Loan Balance Trend (Jan – Dec 2026)</SectionTitle>
           <LoanTrendChart data={fundingLoan.loanTrend}/>
           {fundingLoan.loanYoY < 0 && (
             <div style={{ marginTop: 10, padding: '10px 12px', background: 'var(--amber-bg)', borderRadius: 8, border: '1px solid var(--amber-border)', display: 'flex', gap: 8 }}>
@@ -291,6 +339,27 @@ export function FundingLendingTrend({ progress, companyData }) {
   );
 }
 
+// Ending-balance-only funding chart (avg removed per v5 revision)
+function EndingOnlyFundingChart({ data }) {
+  return <_EndingChart data={data}/>;
+}
+
+function _EndingChart({ data }) {
+  const CustomTip = ({ active, payload, label }) => {
+    if (!active || !payload?.length) return null;
+    return (
+      <div style={{ background:'#fff', border:'1px solid var(--border)', borderRadius:8, padding:'6px 10px', fontSize:12 }}>
+        <div style={{ fontWeight:600, marginBottom:4 }}>{label}</div>
+        <div>Ending Balance: <strong>{fmtIDR(payload[0]?.value)}</strong></div>
+      </div>
+    );
+  };
+  // recharts is imported at the module level via Charts.jsx re-exports below
+  return (
+    <EndingBalanceBarChart data={data} tooltipContent={<CustomTip/>}/>
+  );
+}
+
 // ═══════════════════════════════════════════════════════════════════════════
 // Q3: Leakage Analysis
 // ═══════════════════════════════════════════════════════════════════════════
@@ -306,14 +375,14 @@ export function LeakageAnalysis({ progress, companyData }) {
             <LeakageDonut incoming={leakage.incoming} outgoing={leakage.outgoing}/>
             <div style={{ flex: 1 }}>
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10, marginBottom: 12 }}>
-                <MetricCard label="Incoming Flow" value={`Rp ${(leakage.incoming/1000).toFixed(1)}B`} sub="+8.7% MoM" trend="up"/>
-                <MetricCard label="Outgoing Leakage" value={`Rp ${(leakage.outgoing/1000).toFixed(1)}B`} sub="⚠️ Alert" trend="down"/>
+                <MetricCard label="Incoming Flow" value={fmtIDR(leakage.incoming)} sub="+8.7% MoM" trend="up"/>
+                <MetricCard label="Outgoing Leakage" value={fmtIDR(leakage.outgoing)} sub="⚠️ Alert" trend="down"/>
               </div>
               <div style={{ padding: '10px 14px', borderRadius: 10, background: 'var(--red-neg-bg)', border: '1px solid var(--red-neg-border)', display: 'flex', alignItems: 'center', gap: 10 }}>
                 <div style={{ fontSize: 28, fontWeight: 800, color: 'var(--red-neg)' }}>{leakage.leakagePct}%</div>
                 <div>
                   <div style={{ fontSize: 12, fontWeight: 600, color: 'var(--red-neg)' }}>CASA Leakage Rate</div>
-                  <div style={{ fontSize: 11, color: 'var(--text-2)' }}>Rp {(leakage.outgoing/1000).toFixed(1)}B/month leaving CIMB Niaga</div>
+                  <div style={{ fontSize: 11, color: 'var(--text-2)' }}>{fmtIDR(leakage.outgoing)}/month leaving CIMB Niaga</div>
                 </div>
               </div>
             </div>
@@ -337,7 +406,7 @@ export function LeakageAnalysis({ progress, companyData }) {
                     <span style={{ fontSize: 11, color: 'var(--text-3)', minWidth: 14 }}>#{item.rank}</span>
                     <span style={{ fontSize: 13, fontWeight: 600 }}>{item.name}</span>
                   </div>
-                  <span style={{ fontSize: 12, fontWeight: 700, color: 'var(--red-neg)' }}>Rp {item.amount.toLocaleString()}M</span>
+                  <span style={{ fontSize: 12, fontWeight: 700, color: 'var(--red-neg)' }}>{fmtIDR(item.amount)}</span>
                 </div>
                 <div style={{ height: 5, background: 'var(--bg-3)', borderRadius: 3, overflow: 'hidden' }}>
                   <div style={{ width: `${item.pct}%`, height: '100%', background: 'var(--red-neg)', borderRadius: 3 }}/>
@@ -354,9 +423,9 @@ export function LeakageAnalysis({ progress, companyData }) {
                   <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
                     <span style={{ fontSize: 11, color: 'var(--text-3)', minWidth: 14 }}>#{item.rank}</span>
                     <span style={{ fontSize: 13, fontWeight: 600 }}>{item.name}</span>
-                    {item.name === 'Internal CIMB' && <Badge color="green">Internal</Badge>}
+                    {item.name === 'CIMB Niaga' && <Badge color="green">Internal</Badge>}
                   </div>
-                  <span style={{ fontSize: 12, fontWeight: 700, color: 'var(--green)' }}>Rp {item.amount.toLocaleString()}M</span>
+                  <span style={{ fontSize: 12, fontWeight: 700, color: 'var(--green)' }}>{fmtIDR(item.amount)}</span>
                 </div>
                 <div style={{ height: 5, background: 'var(--bg-3)', borderRadius: 3, overflow: 'hidden' }}>
                   <div style={{ width: `${item.pct}%`, height: '100%', background: 'var(--green)', borderRadius: 3 }}/>
@@ -374,7 +443,7 @@ export function LeakageAnalysis({ progress, companyData }) {
             <div>
               <div style={{ fontSize: 13, fontWeight: 600, color: 'var(--red-neg)', marginBottom: 4 }}>Action Recommendation</div>
               <div style={{ fontSize: 12, color: 'var(--text-1)', lineHeight: 1.7 }}>
-                <strong>{leakage.topOutflow[0].name}</strong> is receiving <strong>Rp {leakage.topOutflow[0].amount.toLocaleString()}M/mo ({leakage.topOutflow[0].pct}%)</strong> of outflows. Propose <strong>Virtual Account consolidation</strong> and <strong>preferential FX rate</strong> to retain these flows.
+                <strong>{leakage.topOutflow[0].name}</strong> is receiving <strong>{fmtIDR(leakage.topOutflow[0].amount)}/mo ({leakage.topOutflow[0].pct}%)</strong> of outflows. Propose <strong>Virtual Account consolidation</strong> and <strong>preferential FX rate</strong> to retain these flows.
               </div>
             </div>
           </div>
@@ -394,10 +463,9 @@ export function ProductHolding({ progress, companyData }) {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
       {show(0.05) && (
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 10 }} className="fade-in">
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 10 }} className="fade-in">
           <MetricCard label="Total Active Products" value={products.total} sub="Across all categories"/>
-          <MetricCard label="Inactive / Untapped" value={products.inactive.length} sub={`Rp ${products.inactive.reduce((a,p)=>a+p.potential,0)}M potential income`} trend="up"/>
-          <MetricCard label="Est. Revenue from PH" value={`Rp ${(products.active.reduce((a,p)=>a+p.revenue,0)/1000).toFixed(1)}B`} sub="From active products"/>
+          <MetricCard label="Product Opportunities" value={products.inactive.length} sub="Products not yet held" trend="up"/>
         </div>
       )}
       {show(0.25) && (
@@ -407,17 +475,11 @@ export function ProductHolding({ progress, companyData }) {
             <div key={cat} style={{ marginBottom: 12 }}>
               <div style={{ fontSize: 11, fontWeight: 600, color: 'var(--text-3)', marginBottom: 6, textTransform: 'uppercase', letterSpacing: '0.04em' }}>{cat}</div>
               {products.active.filter(p => p.category === cat).map((p, i) => (
-                <div key={i} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '8px 10px', background: 'var(--bg-2)', borderRadius: 8, marginBottom: 4, border: '1px solid var(--border)' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                    <CheckCircle size={13} style={{ color: 'var(--green)' }}/>
-                    <div>
-                      <div style={{ fontSize: 13, fontWeight: 500 }}>{p.name}</div>
-                      <div style={{ fontSize: 10, color: 'var(--text-3)' }}>Since {p.since}</div>
-                    </div>
-                  </div>
-                  <div style={{ textAlign: 'right' }}>
-                    <div style={{ fontSize: 12, fontWeight: 600 }}>Rp {p.revenue.toLocaleString()}M</div>
-                    <div style={{ fontSize: 10, color: 'var(--text-3)' }}>rev/mo</div>
+                <div key={i} style={{ display: 'flex', alignItems: 'center', padding: '8px 10px', background: 'var(--bg-2)', borderRadius: 8, marginBottom: 4, border: '1px solid var(--border)' }}>
+                  <CheckCircle size={13} style={{ color: 'var(--green)', flexShrink: 0, marginRight: 10 }}/>
+                  <div>
+                    <div style={{ fontSize: 13, fontWeight: 500 }}>{p.name}</div>
+                    <div style={{ fontSize: 10, color: 'var(--text-3)' }}>Customer Since {p.since}</div>
                   </div>
                 </div>
               ))}
@@ -427,20 +489,11 @@ export function ProductHolding({ progress, companyData }) {
       )}
       {show(0.7) && (
         <Card style={{ borderTop: '3px solid var(--amber)' }} className="fade-in">
-          <SectionTitle icon={Star}>Untapped Products — Growth Opportunities</SectionTitle>
+          <SectionTitle icon={Star}>Product Opportunities</SectionTitle>
           {products.inactive.map((p, i) => (
-            <div key={i} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '10px 12px', background: 'var(--amber-bg)', borderRadius: 8, marginBottom: 8, border: '1px solid var(--amber-border)' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                <ChevronRight size={13} style={{ color: 'var(--amber)' }}/>
-                <div>
-                  <div style={{ fontSize: 13, fontWeight: 600 }}>{p.name}</div>
-                  <Badge color="default">{p.category}</Badge>
-                </div>
-              </div>
-              <div style={{ textAlign: 'right' }}>
-                <div style={{ fontSize: 12, fontWeight: 700, color: 'var(--amber)' }}>+Rp {p.potential}M</div>
-                <div style={{ fontSize: 10, color: 'var(--text-3)' }}>potential income</div>
-              </div>
+            <div key={i} style={{ display: 'flex', alignItems: 'center', padding: '10px 12px', background: 'var(--amber-bg)', borderRadius: 8, marginBottom: 8, border: '1px solid var(--amber-border)' }}>
+              <ChevronRight size={13} style={{ color: 'var(--amber)', flexShrink: 0, marginRight: 10 }}/>
+              <div style={{ fontSize: 13, fontWeight: 500 }}>{p.name}</div>
             </div>
           ))}
         </Card>
@@ -599,8 +652,9 @@ function BankBar({ bank, amount, pct, isCIMB }) {
 
 function CounterpartyRow({ item, isETB, displayRank }) {
   const [expanded, setExpanded] = React.useState(false);
-  const badgeColor = isETB ? { bg: 'var(--green-bg)', color: 'var(--green)', border: 'var(--green-border)' }
-                           : { bg: 'var(--amber-bg)', color: 'var(--amber)', border: 'var(--amber-border)' };
+  const badgeColor = isETB
+    ? { bg: 'var(--green-bg)', color: 'var(--green)', border: 'var(--green-border)', label: 'ETB' }
+    : { bg: 'var(--red-neg-bg)', color: 'var(--red-neg)', border: 'var(--red-neg-border)', label: 'Non-CIMB' };
   return (
     <div style={{
       border: '1px solid var(--border)', borderRadius: 10, marginBottom: 6, overflow: 'hidden',
@@ -621,23 +675,34 @@ function CounterpartyRow({ item, isETB, displayRank }) {
         <span style={{
           fontSize: 10, fontWeight: 600, padding: '2px 7px', borderRadius: 20,
           background: badgeColor.bg, color: badgeColor.color, border: `1px solid ${badgeColor.border}`,
-        }}>{isETB ? 'ETB' : 'NTB'}</span>
+        }}>{badgeColor.label}</span>
         <span style={{ fontSize: 11, color: 'var(--text-3)', marginLeft: 4 }}>
           {item.banks.length} banks
         </span>
         <ChevronDown size={12} style={{
           color: 'var(--text-3)', transform: expanded ? 'rotate(180deg)' : 'none',
           transition: 'transform 0.2s',
-        }} onClick={e => { e.stopPropagation(); setExpanded(p => !p); }}/>
+        }}/>
       </button>
 
       {expanded && (
-        <div style={{ padding: '0 12px 12px 40px' }}>
+        <div style={{ padding: '0 12px 12px' }}>
+          {/* Sender Bank column header */}
+          <div style={{
+            display: 'grid', gridTemplateColumns: '1fr 40px 90px',
+            padding: '4px 8px 4px 28px',
+            borderBottom: '1px solid var(--border)',
+            marginBottom: 4,
+          }}>
+            <span style={{ fontSize: 10, fontWeight: 600, color: 'var(--text-3)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Sender Bank</span>
+            <span style={{ fontSize: 10, fontWeight: 600, color: 'var(--text-3)', textTransform: 'uppercase', textAlign: 'right' }}>%</span>
+            <span style={{ fontSize: 10, fontWeight: 600, color: 'var(--text-3)', textTransform: 'uppercase', textAlign: 'right' }}>Amount</span>
+          </div>
           {item.banks.map((b, i) => (
             <BankBar key={i} bank={b.bank} amount={b.amount} pct={b.pct}
               isCIMB={b.bank.toLowerCase().includes('cimb')}/>
           ))}
-          <div style={{ fontSize: 10, color: 'var(--text-3)', marginTop: 6 }}>
+          <div style={{ fontSize: 10, color: 'var(--text-3)', marginTop: 6, paddingLeft: 20 }}>
             ✦ CIMB Niaga share highlighted
           </div>
         </div>
@@ -672,10 +737,10 @@ function Top10Table({ data, title, isCollection, show }) {
         </div>
         <div>
           <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 8 }}>
-            <span style={{ fontSize: 11, fontWeight: 600, color: 'var(--amber)',
-              background: 'var(--amber-bg)', border: '1px solid var(--amber-border)',
-              padding: '2px 8px', borderRadius: 20 }}>NTB — Top 5</span>
-            <span style={{ fontSize: 10, color: 'var(--text-3)' }}>New to Bank</span>
+            <span style={{ fontSize: 11, fontWeight: 600, color: 'var(--red-neg)',
+              background: 'var(--red-neg-bg)', border: '1px solid var(--red-neg-border)',
+              padding: '2px 8px', borderRadius: 20 }}>Non-CIMB — Top 5</span>
+            <span style={{ fontSize: 10, color: 'var(--text-3)' }}>Not yet banking with CIMB</span>
           </div>
           {data.ntb.map((item, i) => (
             <CounterpartyRow key={i} item={item} isETB={false} displayRank={i + 1}/>
@@ -698,23 +763,60 @@ export function EcosystemAnalysis({ progress, companyData }) {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
 
-      {/* Summary KPIs */}
+      {/* Section label */}
+      {show(0.02) && (
+        <div className="fade-in" style={{ fontSize: 10, color: 'var(--text-3)', fontWeight: 500, textTransform: 'uppercase', letterSpacing: '0.06em' }}>
+          ECOSYSTEM AT A GLANCE · as per {summary.asOf}
+        </div>
+      )}
+
+      {/* 6 KPI cards matching new EcoWeb design */}
       {show(0.05) && (
-        <div className="fade-in">
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: 8, marginBottom: 4 }}>
-            {[
-              { label: 'Total Members', value: summary.totalMembers.toLocaleString(), sub: 'L0 to L3' },
-              { label: 'ETB Members', value: summary.etbMembers.toLocaleString(), sub: 'Existing to Bank', color: 'var(--green)' },
-              { label: 'NTB Members', value: summary.ntbMembers.toLocaleString(), sub: 'Potential leads', color: 'var(--amber)' },
-              { label: 'CASA Balance', value: `IDR ${summary.casaBalance} Bn`, sub: 'Across ecosystem' },
-              { label: 'Transaction Vol.', value: `IDR ${summary.transactionVolume >= 1000 ? (summary.transactionVolume/1000).toFixed(1)+'T' : summary.transactionVolume+' Bn'}`, sub: 'In + out flow' },
-            ].map((m, i) => (
-              <div key={i} style={{ background: 'var(--bg-2)', borderRadius: 10, padding: '10px 12px', border: '1px solid var(--border)' }}>
-                <div style={{ fontSize: 10, color: 'var(--text-3)', marginBottom: 3 }}>{m.label}</div>
-                <div style={{ fontSize: 16, fontWeight: 700, color: m.color || 'var(--text-1)' }}>{m.value}</div>
-                <div style={{ fontSize: 10, color: 'var(--text-3)', marginTop: 2 }}>{m.sub}</div>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 8 }} className="fade-in">
+          {/* Total Members */}
+          <div style={{ background: '#fff', border: '1px solid var(--border)', borderRadius: 10, padding: '12px 14px' }}>
+            <div style={{ fontSize: 10, fontWeight: 600, color: 'var(--text-3)', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 4 }}>Total Members</div>
+            <div style={{ fontSize: 22, fontWeight: 700, color: 'var(--text-1)' }}>{summary.totalMembers.toLocaleString()}</div>
+            <div style={{ fontSize: 11, color: 'var(--text-3)', marginTop: 3 }}>Across the full network</div>
+          </div>
+          {/* ETB Members */}
+          <div style={{ background: '#fff', border: '1px solid var(--green-border)', borderRadius: 10, padding: '12px 14px', borderLeft: '4px solid var(--green)' }}>
+            <div style={{ fontSize: 10, fontWeight: 600, color: 'var(--text-3)', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 4 }}>ETB Members</div>
+            <div style={{ fontSize: 22, fontWeight: 700, color: 'var(--green)' }}>{summary.etbMembers.toLocaleString()}</div>
+            <div style={{ fontSize: 11, color: 'var(--text-3)', marginTop: 3 }}>Already bank with CIMB</div>
+          </div>
+          {/* Non-CIMB Members */}
+          <div style={{ background: '#fff', border: '1px solid var(--red-neg-border)', borderRadius: 10, padding: '12px 14px', borderLeft: '4px solid var(--red-neg)' }}>
+            <div style={{ fontSize: 10, fontWeight: 600, color: 'var(--text-3)', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 4 }}>Non-CIMB Members</div>
+            <div style={{ fontSize: 22, fontWeight: 700, color: 'var(--red-neg)' }}>{summary.nonCimbMembers.toLocaleString()}</div>
+            <div style={{ fontSize: 11, color: 'var(--text-3)', marginTop: 3 }}>Don't bank with CIMB yet</div>
+          </div>
+          {/* MOCA Status */}
+          <div style={{ background: '#fff', border: '1px solid var(--border)', borderRadius: 10, padding: '12px 14px' }}>
+            <div style={{ fontSize: 10, fontWeight: 600, color: 'var(--text-3)', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 6 }}>MOCA Status</div>
+            <div style={{ display: 'flex', gap: 10, alignItems: 'baseline' }}>
+              <div>
+                <span style={{ fontSize: 20, fontWeight: 700, color: 'var(--text-1)' }}>{summary.mocaCount}</span>
+                <span style={{ fontSize: 11, color: 'var(--green)', marginLeft: 4, fontWeight: 600 }}>MOCA</span>
               </div>
-            ))}
+              <div>
+                <span style={{ fontSize: 20, fontWeight: 700, color: 'var(--text-1)' }}>{summary.nonMocaCount}</span>
+                <span style={{ fontSize: 11, color: 'var(--text-3)', marginLeft: 4 }}>Non-MOCA</span>
+              </div>
+            </div>
+            <div style={{ fontSize: 11, color: 'var(--text-3)', marginTop: 3 }}>Split by MOCA category</div>
+          </div>
+          {/* EOM CASA Balance */}
+          <div style={{ background: '#fff', border: '1px solid var(--border)', borderRadius: 10, padding: '12px 14px' }}>
+            <div style={{ fontSize: 10, fontWeight: 600, color: 'var(--text-3)', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 4 }}>EOM · CASA Balance</div>
+            <div style={{ fontSize: 20, fontWeight: 700, color: 'var(--text-1)' }}>{fmtIDRBn(summary.casaBalance)}</div>
+            <div style={{ fontSize: 11, color: 'var(--text-3)', marginTop: 3 }}>Total CASA across the network</div>
+          </div>
+          {/* Revenue */}
+          <div style={{ background: '#fff', border: '1px solid var(--border)', borderRadius: 10, padding: '12px 14px' }}>
+            <div style={{ fontSize: 10, fontWeight: 600, color: 'var(--text-3)', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 4 }}>Revenue</div>
+            <div style={{ fontSize: 20, fontWeight: 700, color: 'var(--text-1)' }}>{fmtIDRBn(summary.revenue)}</div>
+            <div style={{ fontSize: 11, color: 'var(--text-3)', marginTop: 3 }}>Total Revenue across the network</div>
           </div>
         </div>
       )}
@@ -723,40 +825,38 @@ export function EcosystemAnalysis({ progress, companyData }) {
       {show(0.2) && (
         <Card className="fade-in">
           <SectionTitle icon={Network}>Layer Breakdown</SectionTitle>
-          <div style={{ fontSize: 10, color: 'var(--text-3)', marginBottom: 10, textAlign: 'right' }}>
-            L0 to L3 summary by ETB / NTB and financial value
+          <div style={{ fontSize: 10, color: 'var(--text-3)', marginBottom: 8 }}>
+            L0 to L3 · ETB / Non-CIMB · MOCA / Non-MOCA · CASA & Revenue
           </div>
           <div style={{ overflowX: 'auto' }}>
             <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 12 }}>
               <thead>
                 <tr style={{ background: 'var(--bg-2)' }}>
-                  {['Layer','Description','Total Members','ETB','NTB','CASA (Bn)','Trx Vol (Bn)'].map(h => (
-                    <th key={h} style={{ padding: '8px 10px', textAlign: h === 'Layer' || h === 'Description' ? 'left' : 'right',
-                      fontWeight: 600, color: 'var(--text-2)', fontSize: 11, borderBottom: '1px solid var(--border)',
-                      whiteSpace: 'nowrap' }}>{h}</th>
+                  {['Layer','Description','Total','ETB','Non-CIMB','MOCA','Non-MOCA','CASA','Revenue'].map(h => (
+                    <th key={h} style={{
+                      padding: '8px 8px', textAlign: h === 'Layer' || h === 'Description' ? 'left' : 'right',
+                      fontWeight: 600, color: 'var(--text-2)', fontSize: 10, borderBottom: '1px solid var(--border)',
+                      whiteSpace: 'nowrap',
+                    }}>{h}</th>
                   ))}
                 </tr>
               </thead>
               <tbody>
                 {layers.map((row, i) => (
                   <tr key={i} style={{ borderBottom: '1px solid var(--border)', background: i === 0 ? 'var(--red-light)' : '#fff' }}>
-                    <td style={{ padding: '9px 10px', fontWeight: 700, color: 'var(--red)' }}>{row.layer}</td>
-                    <td style={{ padding: '9px 10px', color: 'var(--text-2)', fontSize: 11 }}>{row.desc}</td>
-                    <td style={{ padding: '9px 10px', textAlign: 'right', fontWeight: 600 }}>{row.total.toLocaleString()}</td>
-                    <td style={{ padding: '9px 10px', textAlign: 'right' }}>
-                      <span style={{ color: 'var(--green)', fontWeight: 600, background: 'var(--green-bg)', padding: '2px 6px', borderRadius: 4 }}>
-                        {row.etb} ETB
-                      </span>
+                    <td style={{ padding: '8px 8px', fontWeight: 700, color: 'var(--red)', fontSize: 12 }}>{row.layer}</td>
+                    <td style={{ padding: '8px 8px', color: 'var(--text-2)', fontSize: 11 }}>{row.desc}</td>
+                    <td style={{ padding: '8px 8px', textAlign: 'right', fontWeight: 600 }}>{row.total.toLocaleString()}</td>
+                    <td style={{ padding: '8px 8px', textAlign: 'right' }}>
+                      <span style={{ color: 'var(--green)', fontWeight: 600, background: 'var(--green-bg)', padding: '2px 5px', borderRadius: 4, fontSize: 11 }}>{row.etb}</span>
                     </td>
-                    <td style={{ padding: '9px 10px', textAlign: 'right' }}>
-                      <span style={{ color: 'var(--amber)', fontWeight: 600, background: 'var(--amber-bg)', padding: '2px 6px', borderRadius: 4 }}>
-                        {row.ntb} NTB
-                      </span>
+                    <td style={{ padding: '8px 8px', textAlign: 'right' }}>
+                      <span style={{ color: 'var(--red-neg)', fontWeight: 600, background: 'var(--red-neg-bg)', padding: '2px 5px', borderRadius: 4, fontSize: 11 }}>{row.nonCimb}</span>
                     </td>
-                    <td style={{ padding: '9px 10px', textAlign: 'right', color: 'var(--text-1)' }}>IDR {row.casa} Bn</td>
-                    <td style={{ padding: '9px 10px', textAlign: 'right', color: 'var(--text-1)' }}>
-                      IDR {row.trxVol >= 1000 ? `${(row.trxVol/1000).toFixed(1)}T` : `${row.trxVol} Bn`}
-                    </td>
+                    <td style={{ padding: '8px 8px', textAlign: 'right', fontWeight: 500, color: 'var(--green)' }}>{row.moca}</td>
+                    <td style={{ padding: '8px 8px', textAlign: 'right', color: 'var(--text-2)' }}>{row.nonMoca}</td>
+                    <td style={{ padding: '8px 8px', textAlign: 'right', color: 'var(--text-1)', fontSize: 11 }}>{fmtIDRBn(row.casa)}</td>
+                    <td style={{ padding: '8px 8px', textAlign: 'right', color: 'var(--text-1)', fontSize: 11 }}>{fmtIDRBn(row.revenue)}</td>
                   </tr>
                 ))}
               </tbody>
