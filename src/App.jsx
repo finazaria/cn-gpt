@@ -91,12 +91,13 @@ export default function App() {
     updateMessage(msgId, { feedback: feedbackType, feedbackComment: comment });
   }, [updateMessage]);
 
-  // Suggested pill: behaves exactly like the user typing and sending the prompt.
-  // Always uses the currently selected client. No session switching.
+  // Suggested pill: starts a fresh session then fires the prompt into it.
+  // Always scoped to the currently selected client.
   const handleSuggestedPill = useCallback((text) => {
     if (streaming || !selectedCompany) return;
-    handleSend(text);
-  }, [streaming, selectedCompany, handleSend]);
+    newSession();           // activeIdRef updates immediately inside newSession()
+    handleSend(text);       // addMessage now reads from ref → lands in new session
+  }, [streaming, selectedCompany, newSession, handleSend]);
 
   // ── Render ───────────────────────────────────────────────────────────────
   const messages = activeSession?.messages || [];

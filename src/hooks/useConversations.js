@@ -1,4 +1,5 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useRef, useEffect } from 'react';
+import React from 'react';
 
 function generateId() {
   return Math.random().toString(36).slice(2, 10);
@@ -27,6 +28,11 @@ export function useConversations() {
     return stored.length > 0 ? stored[0].id : sessions[0]?.id;
   });
 
+  // Keep a ref in sync so addMessage/updateMessage always read the latest
+  // activeId even when called from stale closures (e.g. after newSession())
+  const activeIdRef = React.useRef(activeId);
+  useEffect(() => { activeIdRef.current = activeId; }, [activeId]);
+
   const persist = useCallback((updated) => {
     setSessions(updated);
     saveSessions(updated);
@@ -40,17 +46,20 @@ export function useConversations() {
     const updated = [session, ...sessions];
     persist(updated);
     setActiveId(id);
+    activeIdRef.current = id;   // update ref immediately — no waiting for re-render
     return id;
   }, [sessions, persist]);
 
   const selectSession = useCallback((id) => {
     setActiveId(id);
+    activeIdRef.current = id;
   }, []);
 
   const addMessage = useCallback((msg) => {
+    const currentId = activeIdRef.current;
     setSessions(prev => {
       const updated = prev.map(s => {
-        if (s.id !== activeId) return s;
+        if (s.id !== currentId) return s;
         const messages = [...s.messages, msg];
         const title = s.title === 'New Chat' && msg.role === 'user'
           ? msg.text.slice(0, 40) + (msg.text.length > 40 ? '…' : '')
@@ -60,12 +69,13 @@ export function useConversations() {
       saveSessions(updated);
       return updated;
     });
-  }, [activeId]);
+  }, []);   // no deps — reads from ref, never stale
 
   const updateMessage = useCallback((msgId, patch) => {
+    const currentId = activeIdRef.current;
     setSessions(prev => {
       const updated = prev.map(s => {
-        if (s.id !== activeId) return s;
+        if (s.id !== currentId) return s;
         return {
           ...s,
           messages: s.messages.map(m => m.id === msgId ? { ...m, ...patch } : m)
@@ -74,7 +84,7 @@ export function useConversations() {
       saveSessions(updated);
       return updated;
     });
-  }, [activeId]);
+  }, []);   // no deps — reads from ref, never stale
 
   const renameSession = useCallback((id, title) => {
     const updated = sessions.map(s => s.id === id ? { ...s, title } : s);
