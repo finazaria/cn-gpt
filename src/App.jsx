@@ -178,6 +178,7 @@ export default function App() {
             onSend={handleSend}
             disabled={streaming}
             company={selectedCompany}
+            onNewChat={newSession}
           />
         )}
       </div>

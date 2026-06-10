@@ -14,7 +14,7 @@ export const CARD_CONFIG = {
     FUNDING_LENDING:  true,
     LEAKAGE:          true,
     PRODUCTS:         true,
-    INCOME:           false,  // ← disabled: data still being prepared
+    INCOME:           true,   // ← enabled: income data confirmed available
     ECOSYSTEM:        true,
     MEETING_PREP:     true,
   },
@@ -23,7 +23,7 @@ export const CARD_CONFIG = {
     FUNDING_LENDING:  true,
     LEAKAGE:          true,
     PRODUCTS:         true,
-    INCOME:           false,  // ← disabled: data still being prepared
+    INCOME:           true,   // ← enabled: income data confirmed available
     ECOSYSTEM:        true,
     MEETING_PREP:     true,
   },
@@ -32,7 +32,7 @@ export const CARD_CONFIG = {
     FUNDING_LENDING:  true,
     LEAKAGE:          true,
     PRODUCTS:         false,  // ← disabled: product holding data not yet ready
-    INCOME:           false,  // ← disabled: data still being prepared
+    INCOME:           true,   // ← enabled: income data confirmed available
     ECOSYSTEM:        true,
     MEETING_PREP:     true,
   },
@@ -146,16 +146,19 @@ export const astraData = {
   products: {
     total: 3,
     active: [
-      { name: 'CA IDR (CASA)', category: 'Funding', since: '2008' },
-      { name: 'Working Capital', category: 'Lending', since: '2008' },
-      { name: 'BizChannel — Fund Transfer', category: 'Digital Channel', since: '2010' },
+      { name: 'CA IDR (CASA)', category: 'Funding' },
+      { name: 'Working Capital', category: 'Lending' },
+      { name: 'BizChannel — Fund Transfer', category: 'Digital Channel' },
     ],
+    // NPTB-driven full list — shown in full in Product Holding card
     inactive: [
       { name: 'Trade Finance (LC/SKBDN)' },
       { name: 'FX (All Channels)' },
       { name: 'Time Deposit' },
       { name: 'Virtual Account (VA)' },
     ],
+    // Top 3 shown in Company Overview & Meeting Prep (consistent across cards)
+    nptbTop3: ['Trade Finance (LC/SKBDN)', 'FX (All Channels)', 'Time Deposit'],
   },
   findings: [
     {
@@ -190,9 +193,9 @@ export const astraData = {
       { label: 'Loan Declining', detail: 'OS Loan down 2.1% YoY — risk of wallet share loss' },
     ],
     opportunities: [
-      { label: 'Cash Management', detail: 'Rp 420M potential income — no pooling product currently' },
-      { label: 'Supply Chain Finance', detail: '3 NTB supplier leads identified via payment data' },
-      { label: 'Lending Expansion', detail: 'Rp 40B gap vs. FMCG industry average' },
+      { label: 'Trade Finance (LC/SKBDN)', detail: 'Automotive supply chain imports — LC facility not yet in place' },
+      { label: 'FX (All Channels)', detail: 'USD procurement payments — FX hedging opportunity identified' },
+      { label: 'Time Deposit', detail: 'High CASA balance with no TD — optimize idle float yield' },
     ],
     talkingPoints: [
       'Open with CASA performance win: +6.2% — validate their treasury discipline.',
@@ -301,19 +304,22 @@ export const kinoData = {
   products: {
     total: 6,
     active: [
-      { name: 'CA IDR (CASA)', category: 'Funding', since: '2004' },
-      { name: 'Working Capital', category: 'Lending', since: '2004' },
-      { name: 'FX (All Channels)', category: 'Treasury', since: '2012' },
-      { name: 'BizChannel — Fund Transfer', category: 'Digital Channel', since: '2010' },
-      { name: 'BizChannel — eTax Payment', category: 'Digital Channel', since: '2015' },
-      { name: 'Fund Transfer via Branch', category: 'Transactional', since: '2004' },
+      { name: 'CA IDR (CASA)', category: 'Funding' },
+      { name: 'Working Capital', category: 'Lending' },
+      { name: 'FX (All Channels)', category: 'Treasury' },
+      { name: 'BizChannel — Fund Transfer', category: 'Digital Channel' },
+      { name: 'BizChannel — eTax Payment', category: 'Digital Channel' },
+      { name: 'Fund Transfer via Branch', category: 'Transactional' },
     ],
+    // NPTB-driven full list — shown in full in Product Holding card
     inactive: [
       { name: 'Trade Finance (LC/SKBDN)' },
       { name: 'Time Deposit' },
       { name: 'Virtual Account (VA)' },
       { name: 'Payroll' },
     ],
+    // Top 3 shown in Company Overview & Meeting Prep (consistent across cards)
+    nptbTop3: ['Trade Finance (LC/SKBDN)', 'Time Deposit', 'Virtual Account (VA)'],
   },
   findings: [
     {
@@ -348,9 +354,9 @@ export const kinoData = {
       { label: 'No Trade Finance', detail: 'Import activities unhedged — raw material FX risk exposed' },
     ],
     opportunities: [
-      { label: 'Trade Finance / LC', detail: 'Rp 280M potential income — active importer with no facility' },
-      { label: 'FX Forward', detail: 'USD payables to overseas suppliers — hedging need identified' },
-      { label: 'Cash Management', detail: 'Rp 190M potential — growing transactional activity' },
+      { label: 'Trade Finance (LC/SKBDN)', detail: 'Active importer with no LC/SKBDN — raw material FX risk exposed' },
+      { label: 'Time Deposit', detail: 'Growing CASA balance with no TD — opportunity to optimize yield' },
+      { label: 'Virtual Account (VA)', detail: 'Consolidate collection flows from multiple distributors' },
     ],
     talkingPoints: [
       'Celebrate strong CASA growth: +11.4% YoY — acknowledge their business momentum.',
@@ -459,16 +465,19 @@ export const indofoodData = {
   products: {
     total: 3,
     active: [
-      { name: 'CA IDR (CASA)', category: 'Funding', since: '2003' },
-      { name: 'Investment Loan', category: 'Lending', since: '2003' },
-      { name: 'Fund Transfer via Branch', category: 'Transactional', since: '2003' },
+      { name: 'CA IDR (CASA)', category: 'Funding' },
+      { name: 'Investment Loan', category: 'Lending' },
+      { name: 'Fund Transfer via Branch', category: 'Transactional' },
     ],
+    // NPTB-driven full list — shown in full in Product Holding card
     inactive: [
       { name: 'BizChannel — Fund Transfer' },
       { name: 'Working Capital' },
       { name: 'Trade Finance (LC/SKBDN)' },
       { name: 'FX (All Channels)' },
     ],
+    // Top 3 shown in Company Overview & Meeting Prep (consistent across cards)
+    nptbTop3: ['BizChannel — Fund Transfer', 'Working Capital', 'Trade Finance (LC/SKBDN)'],
   },
   findings: [
     {
@@ -503,9 +512,9 @@ export const indofoodData = {
       { label: 'Loan Growth vs CASA', detail: 'Loan growing 7.2% but CASA only 3.8% — funding gap widening' },
     ],
     opportunities: [
-      { label: 'Cash Management', detail: 'Rp 680M potential income — largest cross-sell opportunity' },
-      { label: 'Supply Chain Finance', detail: 'Top 5 agricultural suppliers identified — SCF pipeline' },
-      { label: 'FX Options', detail: 'Seasonal commodity hedging needs — FX option product' },
+      { label: 'BizChannel — Fund Transfer', detail: 'Digital migration opportunity — currently using branch transfers only' },
+      { label: 'Working Capital', detail: 'High loan growth +7.2% YoY — WC facility to support operational needs' },
+      { label: 'Trade Finance (LC/SKBDN)', detail: 'Active commodity imports — LC facility not yet in place' },
     ],
     talkingPoints: [
       'Acknowledge loan growth: +7.2% YoY — positive momentum, express commitment to support expansion.',

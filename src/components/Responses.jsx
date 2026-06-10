@@ -222,12 +222,14 @@ export function CompanyOverview({ progress, companyData }) {
               }}>{p.name}</span>
             ))}
           </div>
-          {products.inactive.length > 0 && (
+          {products.nptbTop3 && products.nptbTop3.length > 0 && (
             <div style={{ marginTop: 10, padding: '8px 10px', background: 'var(--bg-2)', borderRadius: 8 }}>
-              <div style={{ fontSize: 11, color: 'var(--text-3)', marginBottom: 4 }}>Not Yet Adopted (Opportunities)</div>
+              <div style={{ fontSize: 11, color: 'var(--text-3)', marginBottom: 6 }}>
+                Product Opportunities <span style={{ color: 'var(--amber)', fontWeight: 500 }}>(Top 3 NPTB)</span>
+              </div>
               <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
-                {products.inactive.map((p, i) => (
-                  <span key={i} style={{ fontSize: 11, padding: '4px 10px', borderRadius: 20, background: '#fff', color: 'var(--text-2)', border: '1px solid var(--border)' }}>{p.name}</span>
+                {products.nptbTop3.map((name, i) => (
+                  <span key={i} style={{ fontSize: 11, padding: '4px 10px', borderRadius: 20, background: '#fff', color: 'var(--amber)', border: '1px solid var(--amber-border)', fontWeight: 500 }}>{name}</span>
                 ))}
               </div>
             </div>
@@ -423,7 +425,6 @@ export function LeakageAnalysis({ progress, companyData }) {
                   <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
                     <span style={{ fontSize: 11, color: 'var(--text-3)', minWidth: 14 }}>#{item.rank}</span>
                     <span style={{ fontSize: 13, fontWeight: 600 }}>{item.name}</span>
-                    {item.name === 'CIMB Niaga' && <Badge color="green">Internal</Badge>}
                   </div>
                   <span style={{ fontSize: 12, fontWeight: 700, color: 'var(--green)' }}>{fmtIDR(item.amount)}</span>
                 </div>
@@ -477,10 +478,7 @@ export function ProductHolding({ progress, companyData }) {
               {products.active.filter(p => p.category === cat).map((p, i) => (
                 <div key={i} style={{ display: 'flex', alignItems: 'center', padding: '8px 10px', background: 'var(--bg-2)', borderRadius: 8, marginBottom: 4, border: '1px solid var(--border)' }}>
                   <CheckCircle size={13} style={{ color: 'var(--green)', flexShrink: 0, marginRight: 10 }}/>
-                  <div>
-                    <div style={{ fontSize: 13, fontWeight: 500 }}>{p.name}</div>
-                    <div style={{ fontSize: 10, color: 'var(--text-3)' }}>Customer Since {p.since}</div>
-                  </div>
+                  <div style={{ fontSize: 13, fontWeight: 500 }}>{p.name}</div>
                 </div>
               ))}
             </div>
@@ -512,10 +510,10 @@ export function IncomeTrend({ progress, companyData }) {
     <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
       {show(0.05) && (
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 10 }} className="fade-in">
-          <MetricCard label="Funding NII" value={`Rp ${income.fundingNII.toLocaleString()}M`} sub="+34% vs Jan" trend="up"/>
-          <MetricCard label="Loan NII" value={`Rp ${income.loanNII.toLocaleString()}M`} sub="+19% vs Jan" trend="up"/>
-          <MetricCard label="NOII" value={`Rp ${income.noii.toLocaleString()}M`} sub="+25% vs Jan" trend="up"/>
-          <MetricCard label="Total Income" value={`Rp ${(income.total/1000).toFixed(1)}B`} sub={`+${income.yoy}% YoY`} trend="up"/>
+          <MetricCard label="Funding NII" value={fmtIDR(income.fundingNII)} sub="+34% vs Jan" trend="up"/>
+          <MetricCard label="Loan NII" value={fmtIDR(income.loanNII)} sub="+19% vs Jan" trend="up"/>
+          <MetricCard label="NOII" value={fmtIDR(income.noii)} sub="+25% vs Jan" trend="up"/>
+          <MetricCard label="Total Income" value={fmtIDR(income.total)} sub={`+${income.yoy}% YoY`} trend="up"/>
         </div>
       )}
       {show(0.25) && (
@@ -539,7 +537,9 @@ export function IncomeTrend({ progress, companyData }) {
 // ═══════════════════════════════════════════════════════════════════════════
 export function MeetingPrep({ progress, companyData }) {
   const show = (t) => progress >= t;
-  const { company, meetingPrep } = companyData;
+  const { company, meetingPrep, products } = companyData;
+  // Use nptbTop3 for consistent product opportunities across all cards
+  const nptbTop3 = products?.nptbTop3 || [];
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
       {show(0.05) && (
@@ -588,13 +588,17 @@ export function MeetingPrep({ progress, companyData }) {
             ))}
           </Card>
           <Card style={{ borderTop: '3px solid var(--green)' }}>
-            <SectionTitle icon={Star}>Opportunities to Pitch</SectionTitle>
-            {meetingPrep.opportunities.map((o, i) => (
-              <div key={i} style={{ padding: '8px 10px', background: 'var(--green-bg)', borderRadius: 8, border: '1px solid var(--green-border)', marginBottom: 6 }}>
-                <div style={{ fontSize: 12, fontWeight: 600, color: 'var(--green)' }}>{o.label}</div>
-                <div style={{ fontSize: 11, color: 'var(--text-2)', marginTop: 2 }}>{o.detail}</div>
-              </div>
-            ))}
+            <SectionTitle icon={Star}>Product Opportunities to Pitch</SectionTitle>
+            {nptbTop3.map((productName, i) => {
+              // Match with meetingPrep.opportunities if label exists, else show product name only
+              const detail = meetingPrep.opportunities[i]?.detail || '';
+              return (
+                <div key={i} style={{ padding: '8px 10px', background: 'var(--green-bg)', borderRadius: 8, border: '1px solid var(--green-border)', marginBottom: 6 }}>
+                  <div style={{ fontSize: 12, fontWeight: 600, color: 'var(--green)' }}>{productName}</div>
+                  {detail && <div style={{ fontSize: 11, color: 'var(--text-2)', marginTop: 2 }}>{detail}</div>}
+                </div>
+              );
+            })}
           </Card>
         </div>
       )}
@@ -650,11 +654,14 @@ function BankBar({ bank, amount, pct, isCIMB }) {
   );
 }
 
-function CounterpartyRow({ item, isETB, displayRank }) {
+function CounterpartyRow({ item, isETB, displayRank, isCollection }) {
   const [expanded, setExpanded] = React.useState(false);
   const badgeColor = isETB
     ? { bg: 'var(--green-bg)', color: 'var(--green)', border: 'var(--green-border)', label: 'ETB' }
     : { bg: 'var(--red-neg-bg)', color: 'var(--red-neg)', border: 'var(--red-neg-border)', label: 'Non-CIMB' };
+  // Collection = money coming IN to our client → banks that SENT the money = Sender Bank
+  // Payment = money going OUT from our client → banks that RECEIVED the money = Beneficiary Bank
+  const bankColLabel = isCollection ? 'Sender Bank' : 'Beneficiary Bank';
   return (
     <div style={{
       border: '1px solid var(--border)', borderRadius: 10, marginBottom: 6, overflow: 'hidden',
@@ -687,14 +694,14 @@ function CounterpartyRow({ item, isETB, displayRank }) {
 
       {expanded && (
         <div style={{ padding: '0 12px 12px' }}>
-          {/* Sender Bank column header */}
+          {/* Dynamic bank column header: Sender Bank for Collection, Beneficiary Bank for Payment */}
           <div style={{
             display: 'grid', gridTemplateColumns: '1fr 40px 90px',
             padding: '4px 8px 4px 28px',
             borderBottom: '1px solid var(--border)',
             marginBottom: 4,
           }}>
-            <span style={{ fontSize: 10, fontWeight: 600, color: 'var(--text-3)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Sender Bank</span>
+            <span style={{ fontSize: 10, fontWeight: 600, color: 'var(--text-3)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>{bankColLabel}</span>
             <span style={{ fontSize: 10, fontWeight: 600, color: 'var(--text-3)', textTransform: 'uppercase', textAlign: 'right' }}>%</span>
             <span style={{ fontSize: 10, fontWeight: 600, color: 'var(--text-3)', textTransform: 'uppercase', textAlign: 'right' }}>Amount</span>
           </div>
@@ -713,13 +720,12 @@ function CounterpartyRow({ item, isETB, displayRank }) {
 
 function Top10Table({ data, title, isCollection, show }) {
   if (!show) return null;
-  const allItems = [...data.etb, ...data.ntb];
   return (
     <Card className="fade-in" style={{ marginTop: 0 }}>
       <SectionTitle icon={isCollection ? TrendingUp : TrendingDown}>{title}</SectionTitle>
       <div style={{ display: 'flex', gap: 6, marginBottom: 12 }}>
         <span style={{ fontSize: 11, color: 'var(--text-3)' }}>
-          Click any row to see bank distribution. &nbsp;✦ = CIMB Niaga share
+          Click any row to see {isCollection ? 'sender' : 'beneficiary'} bank distribution. &nbsp;✦ = CIMB Niaga share
         </span>
       </div>
 
@@ -732,7 +738,7 @@ function Top10Table({ data, title, isCollection, show }) {
             <span style={{ fontSize: 10, color: 'var(--text-3)' }}>Existing to Bank</span>
           </div>
           {data.etb.map((item, i) => (
-            <CounterpartyRow key={i} item={item} isETB={true} displayRank={i + 1}/>
+            <CounterpartyRow key={i} item={item} isETB={true} displayRank={i + 1} isCollection={isCollection}/>
           ))}
         </div>
         <div>
@@ -743,7 +749,7 @@ function Top10Table({ data, title, isCollection, show }) {
             <span style={{ fontSize: 10, color: 'var(--text-3)' }}>Not yet banking with CIMB</span>
           </div>
           {data.ntb.map((item, i) => (
-            <CounterpartyRow key={i} item={item} isETB={false} displayRank={i + 1}/>
+            <CounterpartyRow key={i} item={item} isETB={false} displayRank={i + 1} isCollection={isCollection}/>
           ))}
         </div>
       </div>

@@ -84,13 +84,33 @@ export function LoanTrendChart({ data }) {
 
 // ─── Income Trend Chart ─────────────────────────────────────────────────────
 export function IncomeTrendChart({ data }) {
+  const fmtAxis = (v) => {
+    if (v >= 1000) return `IDR ${(v/1000).toFixed(0)} Bn`;
+    return `IDR ${v} Mn`;
+  };
+  const CustomIncomeTip = ({ active, payload, label }) => {
+    if (!active || !payload?.length) return null;
+    const fmtV = (v) => v >= 1000 ? `IDR ${(v/1000).toFixed(1)} Bn` : `IDR ${v} Mn`;
+    return (
+      <div style={{ background: '#fff', border: '1px solid #e8eaee', borderRadius: 8, fontSize: 12, boxShadow: '0 4px 16px rgba(0,0,0,0.1)' }}>
+        <div style={{ padding: '6px 10px', borderBottom: '1px solid #f0f0f0', fontWeight: 600 }}>{label}</div>
+        {payload.map((p, i) => (
+          <div key={i} style={{ padding: '4px 10px', display: 'flex', alignItems: 'center', gap: 8 }}>
+            <span style={{ width: 8, height: 8, borderRadius: 2, background: p.color, display: 'inline-block' }}/>
+            <span style={{ color: '#4b5568', fontSize: 11 }}>{p.name}:</span>
+            <span style={{ fontWeight: 600, fontSize: 11 }}>{fmtV(p.value)}</span>
+          </div>
+        ))}
+      </div>
+    );
+  };
   return (
     <ResponsiveContainer width="100%" height={220}>
       <BarChart data={data} margin={{ top: 4, right: 8, left: 0, bottom: 0 }}>
         <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
         <XAxis dataKey="month" tick={{ fontSize: 10, fill: '#9aa3b2' }} />
-        <YAxis tick={{ fontSize: 10, fill: '#9aa3b2' }} tickFormatter={v => `${v}M`} />
-        <Tooltip content={<CustomTooltip />} />
+        <YAxis tick={{ fontSize: 10, fill: '#9aa3b2' }} tickFormatter={fmtAxis} width={70}/>
+        <Tooltip content={<CustomIncomeTip/>} />
         <Legend wrapperStyle={{ fontSize: 11 }} />
         <Bar dataKey="fundingNII" name="Funding NII" stackId="a" fill={RED} radius={[0,0,0,0]} />
         <Bar dataKey="loanNII" name="Loan NII" stackId="a" fill={NAVY} radius={[0,0,0,0]} />
@@ -108,6 +128,7 @@ export function IncomePieChart({ fundingNII, loanNII, noii }) {
     { name: 'NOII', value: noii, color: AMBER },
   ];
   const total = fundingNII + loanNII + noii;
+  const fmtV = (v) => v >= 1000 ? `IDR ${(v/1000).toFixed(1)} Bn` : `IDR ${v} Mn`;
   return (
     <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
       <ResponsiveContainer width={140} height={140}>
@@ -116,7 +137,7 @@ export function IncomePieChart({ fundingNII, loanNII, noii }) {
             dataKey="value" stroke="none">
             {data.map((d, i) => <Cell key={i} fill={d.color} />)}
           </Pie>
-          <Tooltip formatter={(v) => [`Rp ${v.toLocaleString()}M`, '']} />
+          <Tooltip formatter={(v) => [fmtV(v), '']} />
         </PieChart>
       </ResponsiveContainer>
       <div style={{ flex: 1 }}>
@@ -124,7 +145,7 @@ export function IncomePieChart({ fundingNII, loanNII, noii }) {
           <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8 }}>
             <span style={{ width: 10, height: 10, borderRadius: 2, background: d.color, flexShrink: 0 }} />
             <span style={{ flex: 1, fontSize: 12, color: 'var(--text-2)' }}>{d.name}</span>
-            <span style={{ fontSize: 13, fontWeight: 600 }}>Rp {d.value.toLocaleString()}M</span>
+            <span style={{ fontSize: 13, fontWeight: 600 }}>{fmtV(d.value)}</span>
             <span style={{ fontSize: 11, color: 'var(--text-3)', minWidth: 32, textAlign: 'right' }}>
               {Math.round(d.value / total * 100)}%
             </span>
@@ -132,7 +153,7 @@ export function IncomePieChart({ fundingNII, loanNII, noii }) {
         ))}
         <div style={{ borderTop: '1px solid var(--border)', paddingTop: 8, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <span style={{ fontSize: 12, fontWeight: 600 }}>Total</span>
-          <span style={{ fontSize: 14, fontWeight: 700, color: RED }}>Rp {total.toLocaleString()}M</span>
+          <span style={{ fontSize: 14, fontWeight: 700, color: RED }}>{fmtV(total)}</span>
         </div>
       </div>
     </div>

@@ -1,8 +1,61 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Send, Paperclip, X, FileText, Image, File, Upload } from 'lucide-react';
+import { Send, Paperclip, X, FileText, Image, File, Upload, Building2, TrendingUp, AlertTriangle, Package, BarChart2, Calendar, Network } from 'lucide-react';
 
 const MAX_FILE_SIZE_MB = 10;
 const ACCEPTED_TYPES = '.pdf,.doc,.docx,.xls,.xlsx,.png,.jpg,.jpeg,.txt,.csv';
+
+// ─── Suggested questions — always shown above chatbox ────────────────────────
+const SUGGESTED = [
+  { label: 'Company Overview', icon: Building2,     promptFn: (n) => `Tell me about ${n}` },
+  { label: 'Balance Trend',    icon: TrendingUp,    promptFn: (n) => `Show funding & lending balance trend for ${n}` },
+  { label: 'Leakage Analysis', icon: AlertTriangle, promptFn: (n) => `Analyze leakage for ${n}` },
+  { label: 'Product Holding',  icon: Package,       promptFn: (n) => `What products does ${n} currently use?` },
+  { label: 'Income Trend',     icon: BarChart2,     promptFn: (n) => `How's the income trend for ${n}?` },
+  { label: 'Ecosystem',        icon: Network,       promptFn: (n) => `Show me the ecosystem for ${n}` },
+  { label: 'Meeting Prep',     icon: Calendar,      promptFn: (n) => `Prepare me for my customer meeting with ${n}` },
+];
+
+function SuggestedPills({ company, onSend }) {
+  if (!company) return null;
+  return (
+    <div style={{ marginBottom: 8 }}>
+      <div style={{ fontSize: 10, fontWeight: 600, color: 'var(--text-3)', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 6 }}>
+        SUGGESTED QUESTIONS
+      </div>
+      <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
+        {SUGGESTED.map((s, i) => {
+          const Icon = s.icon;
+          return (
+            <button key={i}
+              onClick={() => onSend(s.promptFn(company.name))}
+              style={{
+                display: 'inline-flex', alignItems: 'center', gap: 5,
+                padding: '5px 11px', borderRadius: 20, cursor: 'pointer',
+                border: '1px solid var(--border)',
+                background: 'var(--bg-2)', color: 'var(--text-2)',
+                fontSize: 12, fontWeight: 400,
+                transition: 'all 0.15s',
+              }}
+              onMouseEnter={e => {
+                e.currentTarget.style.background = 'var(--red-light)';
+                e.currentTarget.style.color = 'var(--red-dark)';
+                e.currentTarget.style.borderColor = 'var(--red-border)';
+              }}
+              onMouseLeave={e => {
+                e.currentTarget.style.background = 'var(--bg-2)';
+                e.currentTarget.style.color = 'var(--text-2)';
+                e.currentTarget.style.borderColor = 'var(--border)';
+              }}
+            >
+              <Icon size={11}/>
+              {s.label}
+            </button>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
 
 function FilePreview({ file, onRemove }) {
   const ext = file.name.split('.').pop().toLowerCase();
@@ -162,7 +215,7 @@ function UploadModal({ onClose, onUpload }) {
   );
 }
 
-export default function ChatInput({ onSend, disabled, company }) {
+export default function ChatInput({ onSend, disabled, company, onNewChat }) {
   const [value, setValue] = useState('');
   const [attachedFiles, setAttachedFiles] = useState([]);
   const [showUpload, setShowUpload] = useState(false);
@@ -187,6 +240,14 @@ export default function ChatInput({ onSend, disabled, company }) {
     if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handleSend(); }
   };
 
+  // Suggested pill click: start a new chat session, then send the prompt
+  const handleSuggestedClick = (prompt) => {
+    if (!company || disabled) return;
+    if (onNewChat) onNewChat();
+    // Small delay so session is created before message is added
+    setTimeout(() => onSend(prompt), 50);
+  };
+
   const placeholder = company
     ? `Ask about ${company.shortName}'s performance, trends, leakage...`
     : 'Select a company to begin...';
@@ -194,6 +255,9 @@ export default function ChatInput({ onSend, disabled, company }) {
   return (
     <div style={{ padding: '0 20px 18px', background: '#fff', borderTop: '1px solid var(--border)' }}>
       <div style={{ maxWidth: 820, margin: '0 auto' }}>
+        {/* Suggested Questions — always visible above chatbox */}
+        <SuggestedPills company={company} onSend={handleSuggestedClick}/>
+
         {/* Attached files preview */}
         {attachedFiles.length > 0 && (
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, marginBottom: 8 }}>
