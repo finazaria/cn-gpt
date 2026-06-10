@@ -91,12 +91,12 @@ export default function App() {
     updateMessage(msgId, { feedback: feedbackType, feedbackComment: comment });
   }, [updateMessage]);
 
-  // Suggested pill: new session → send prompt for current company only
-  const handleSuggestedPill = useCallback((prompt) => {
+  // Suggested pill: behaves exactly like the user typing and sending the prompt.
+  // Always uses the currently selected client. No session switching.
+  const handleSuggestedPill = useCallback((text) => {
     if (streaming || !selectedCompany) return;
-    newSession();
-    Promise.resolve().then(() => handleSend(prompt));
-  }, [streaming, selectedCompany, newSession, handleSend]);
+    handleSend(text);
+  }, [streaming, selectedCompany, handleSend]);
 
   // ── Render ───────────────────────────────────────────────────────────────
   const messages = activeSession?.messages || [];

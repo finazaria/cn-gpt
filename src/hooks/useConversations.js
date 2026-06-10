@@ -52,7 +52,6 @@ export function useConversations() {
       const updated = prev.map(s => {
         if (s.id !== activeId) return s;
         const messages = [...s.messages, msg];
-        // Auto-title from first user message
         const title = s.title === 'New Chat' && msg.role === 'user'
           ? msg.text.slice(0, 40) + (msg.text.length > 40 ? '…' : '')
           : s.title;
