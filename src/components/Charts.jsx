@@ -214,3 +214,51 @@ export function EndingBalanceBarChart({ data, tooltipContent }) {
     </ResponsiveContainer>
   );
 }
+
+// ─── Stacked CA + TD Funding Chart (v7) ─────────────────────────────────────
+export function StackedFundingChart({ data }) {
+  const fmtAxis = (v) => {
+    if (v >= 1000000) return `${(v/1000000).toFixed(0)}Tn`;
+    if (v >= 1000) return `${(v/1000).toFixed(0)}Bn`;
+    return `${v}Mn`;
+  };
+  const CustomTip = ({ active, payload, label }) => {
+    if (!active || !payload?.length) return null;
+    const ca = payload.find(p => p.dataKey === 'ca')?.value || 0;
+    const td = payload.find(p => p.dataKey === 'td')?.value || 0;
+    const fmtV = (v) => v >= 1000 ? `IDR ${(v/1000).toFixed(1)} Bn` : `IDR ${v} Mn`;
+    return (
+      <div style={{ background:'#fff', border:'1px solid #e8eaee', borderRadius:8, fontSize:12, boxShadow:'0 4px 16px rgba(0,0,0,0.1)', minWidth: 160 }}>
+        <div style={{ padding:'6px 10px', borderBottom:'1px solid #f0f0f0', fontWeight:600 }}>{label}</div>
+        <div style={{ padding:'4px 10px', display:'flex', alignItems:'center', gap:8 }}>
+          <span style={{ width:8, height:8, borderRadius:2, background:'#CC0001', display:'inline-block'}}/>
+          <span style={{ color:'#4b5568', fontSize:11 }}>CA:</span>
+          <span style={{ fontWeight:600, fontSize:11 }}>{fmtV(ca)}</span>
+        </div>
+        <div style={{ padding:'4px 10px', display:'flex', alignItems:'center', gap:8 }}>
+          <span style={{ width:8, height:8, borderRadius:2, background:'#2563eb', display:'inline-block'}}/>
+          <span style={{ color:'#4b5568', fontSize:11 }}>TD:</span>
+          <span style={{ fontWeight:600, fontSize:11 }}>{fmtV(td)}</span>
+        </div>
+        <div style={{ padding:'4px 10px 8px', borderTop:'1px solid #f0f0f0', display:'flex', alignItems:'center', gap:8 }}>
+          <span style={{ width:8, height:8, borderRadius:2, background:'#6b7280', display:'inline-block'}}/>
+          <span style={{ color:'#4b5568', fontSize:11 }}>Total:</span>
+          <span style={{ fontWeight:700, fontSize:11 }}>{fmtV(ca + td)}</span>
+        </div>
+      </div>
+    );
+  };
+  return (
+    <ResponsiveContainer width="100%" height={220}>
+      <BarChart data={data} margin={{ top:4, right:8, left:0, bottom:0 }}>
+        <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
+        <XAxis dataKey="month" tick={{ fontSize:10, fill:'#9aa3b2' }} />
+        <YAxis tick={{ fontSize:10, fill:'#9aa3b2' }} tickFormatter={fmtAxis} width={52}/>
+        <Tooltip content={<CustomTip/>} />
+        <Legend wrapperStyle={{ fontSize: 11 }} />
+        <Bar dataKey="ca" name="CA (Current Account)" stackId="a" fill="#CC0001" radius={[0,0,0,0]} />
+        <Bar dataKey="td" name="TD (Time Deposit)" stackId="a" fill="#2563eb" radius={[3,3,0,0]} />
+      </BarChart>
+    </ResponsiveContainer>
+  );
+}

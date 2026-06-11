@@ -10,7 +10,7 @@ import { fmtIDR, fmtIDRBn, fmtPct } from '../utils/format.js';
 import {
   FundingTrendChart, LoanTrendChart, IncomeTrendChart,
   IncomePieChart, LeakageTrendChart, LeakageDonut,
-  EndingBalanceBarChart,
+  EndingBalanceBarChart, StackedFundingChart,
 } from './Charts.jsx';
 
 // ─── Shared UI primitives ────────────────────────────────────────────────────
@@ -269,19 +269,40 @@ export function FundingLendingTrend({ progress, companyData }) {
       {show(0.05) && (
         <div className="fade-in">
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 10 }}>
-            <MetricCard label="Ending Funding Balance" value={fmtIDR(fundingLoan.fundingEnd)} sub={`+${fundingLoan.fundingYoY}% YoY`} trend="up"/>
-            <MetricCard label="Avg Funding Balance" value={fmtIDR(fundingLoan.fundingAvg)} sub="Dec 2026"/>
-            <MetricCard label="Funding vs Loan Ratio" value={`${Math.round(fundingLoan.fundingAvg/fundingLoan.loanOS*100)}:100`} sub="CASA to Loan coverage"/>
+            {/* Ending Funding Balance */}
+            <MetricCard
+              label="Ending Funding Balance"
+              value={fmtIDR(fundingLoan.fundingEnd)}
+              sub={`+${fundingLoan.fundingYoY}% YoY`}
+              trend="up"
+            />
+            {/* Avg Funding Balance — now also shows YoY */}
+            <MetricCard
+              label="Avg Funding Balance"
+              value={fmtIDR(fundingLoan.fundingAvg)}
+              sub={`+${fundingLoan.avgYoY || fundingLoan.fundingYoY}% YoY`}
+              trend="up"
+            />
+            {/* CASA Ratio = CA / (CA+TD) × 100 */}
+            <MetricCard
+              label="CASA Ratio"
+              value={`${fundingLoan.casaRatioPct}%`}
+              sub="CA share of total deposits"
+            />
           </div>
         </div>
       )}
       {show(0.2) && (
         <Card className="fade-in">
           <SectionTitle icon={TrendingUp}>Funding Balance Trend (Jan – Dec 2026)</SectionTitle>
-          {/* Ending balance only chart — avg removed per revision */}
-          <EndingOnlyFundingChart data={fundingLoan.fundingTrend}/>
+          {/* Stacked bar: CA (red) + TD (blue) = total funding */}
+          <StackedFundingChart data={fundingLoan.fundingTrend}/>
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 8, marginTop: 12 }}>
-            {[{ label: '3M Change', value: '+2.8%' }, { label: '6M Change', value: '+4.1%' }, { label: 'YoY Change', value: `+${fundingLoan.fundingYoY}%` }].map((m, i) => (
+            {[
+              { label: '3M Change', value: '+2.8%' },
+              { label: '6M Change', value: '+4.1%' },
+              { label: 'YoY Change', value: `+${fundingLoan.fundingYoY}%` },
+            ].map((m, i) => (
               <div key={i} style={{ textAlign: 'center', padding: '8px', background: 'var(--green-bg)', borderRadius: 8, border: '1px solid var(--green-border)' }}>
                 <div style={{ fontSize: 10, color: 'var(--text-3)' }}>{m.label}</div>
                 <div style={{ fontSize: 16, fontWeight: 700, color: 'var(--green)' }}>{m.value}</div>
@@ -293,9 +314,23 @@ export function FundingLendingTrend({ progress, companyData }) {
       {show(0.5) && (
         <div className="fade-in">
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 10 }}>
-            <MetricCard label="OS Loan Balance" value={fmtIDR(fundingLoan.loanOS)} sub={`${fundingLoan.loanYoY}% YoY`} trend={fundingLoan.loanYoY >= 0 ? 'up' : 'down'}/>
-            <MetricCard label="Average Loan" value={fmtIDR(fundingLoan.loanAvg)} sub="Dec 2026"/>
-            <MetricCard label="Loan vs CASA" value={`${Math.round(fundingLoan.loanOS/fundingLoan.fundingAvg*100)}%`} sub="Loan/CASA multiplier"/>
+            <MetricCard
+              label="OS Loan Balance"
+              value={fmtIDR(fundingLoan.loanOS)}
+              sub={`${fundingLoan.loanYoY}% YoY`}
+              trend={fundingLoan.loanYoY >= 0 ? 'up' : 'down'}
+            />
+            <MetricCard
+              label="Average Loan"
+              value={fmtIDR(fundingLoan.loanAvg)}
+              sub="Dec 2026"
+            />
+            {/* LDR = OS Loan / Total Deposit × 100 */}
+            <MetricCard
+              label="LDR (Loan-to-Deposit) Ratio"
+              value={`${fundingLoan.ldrPct}%`}
+              sub="Loan funded by customer deposits"
+            />
           </div>
         </div>
       )}
@@ -341,11 +376,8 @@ export function FundingLendingTrend({ progress, companyData }) {
   );
 }
 
-// Ending-balance-only funding chart (avg removed per v5 revision)
-function EndingOnlyFundingChart({ data }) {
-  return <_EndingChart data={data}/>;
-}
-
+// EndingOnlyFundingChart kept for backward compat but no longer used in UI
+function EndingOnlyFundingChart({ data }) { return <_EndingChart data={data}/>; }
 function _EndingChart({ data }) {
   const CustomTip = ({ active, payload, label }) => {
     if (!active || !payload?.length) return null;
@@ -356,10 +388,7 @@ function _EndingChart({ data }) {
       </div>
     );
   };
-  // recharts is imported at the module level via Charts.jsx re-exports below
-  return (
-    <EndingBalanceBarChart data={data} tooltipContent={<CustomTip/>}/>
-  );
+  return <EndingBalanceBarChart data={data} tooltipContent={<CustomTip/>}/>;
 }
 
 // ═══════════════════════════════════════════════════════════════════════════
@@ -552,10 +581,6 @@ export function MeetingPrep({ progress, companyData }) {
                 <span style={{ fontSize: 12 }}>🏢 <strong>Group:</strong> {meetingPrep.snapshot.group}</span>
                 <span style={{ fontSize: 12 }}>👤 <strong>RM:</strong> {meetingPrep.snapshot.rm}</span>
               </div>
-            </div>
-            <div style={{ textAlign: 'right', fontSize: 12, color: 'var(--text-2)' }}>
-              <div>Last Meeting</div>
-              <div style={{ fontWeight: 600 }}>{meetingPrep.snapshot.lastMeeting}</div>
             </div>
           </div>
         </Card>

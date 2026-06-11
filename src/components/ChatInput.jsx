@@ -1,5 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
-import { Send, Paperclip, X, FileText, Image, File, Upload, Building2, TrendingUp, AlertTriangle, Package, BarChart2, Calendar, Network } from 'lucide-react';
+import React, { useState, useRef, useEffect } from 'react';import { Send, Paperclip, X, FileText, Image, File, Upload, Building2, TrendingUp, AlertTriangle, Package, BarChart2, Calendar, Network } from 'lucide-react';
 
 const MAX_FILE_SIZE_MB = 10;
 const ACCEPTED_TYPES = '.pdf,.doc,.docx,.xls,.xlsx,.png,.jpg,.jpeg,.txt,.csv';
@@ -16,47 +15,71 @@ const SUGGESTED = [
 ];
 
 function SuggestedPills({ company, onSend }) {
+  const [open, setOpen] = React.useState(true);
   if (!company) return null;
   return (
     <div style={{ marginBottom: 10 }}>
-      <div style={{
-        fontSize: 10, fontWeight: 600, color: 'var(--text-3)',
-        textTransform: 'uppercase', letterSpacing: '0.06em',
-        marginBottom: 7,
-      }}>
-        SUGGESTED QUESTIONS
-      </div>
-      <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
-        {SUGGESTED.map((s, i) => {
-          const Icon = s.icon;
-          return (
-            <button key={i}
-              onClick={() => onSend(s.promptFn(company.name))}
-              style={{
-                display: 'inline-flex', alignItems: 'center', gap: 5,
-                padding: '5px 11px', borderRadius: 20, cursor: 'pointer',
-                border: '1px solid var(--border)',
-                background: 'var(--bg-2)', color: 'var(--text-2)',
-                fontSize: 12, fontWeight: 400,
-                transition: 'all 0.15s',
-              }}
-              onMouseEnter={e => {
-                e.currentTarget.style.background = 'var(--red-light)';
-                e.currentTarget.style.color = 'var(--red-dark)';
-                e.currentTarget.style.borderColor = 'var(--red-border)';
-              }}
-              onMouseLeave={e => {
-                e.currentTarget.style.background = 'var(--bg-2)';
-                e.currentTarget.style.color = 'var(--text-2)';
-                e.currentTarget.style.borderColor = 'var(--border)';
-              }}
-            >
-              <Icon size={11}/>
-              {s.label}
-            </button>
-          );
-        })}
-      </div>
+      {/* Toggle row */}
+      <button
+        onClick={() => setOpen(p => !p)}
+        style={{
+          display: 'flex', alignItems: 'center', gap: 6,
+          background: 'none', border: 'none', cursor: 'pointer',
+          padding: '2px 0', marginBottom: open ? 8 : 0,
+        }}
+      >
+        <span style={{
+          fontSize: 10, fontWeight: 600, color: 'var(--text-3)',
+          textTransform: 'uppercase', letterSpacing: '0.06em',
+        }}>
+          SUGGESTED QUESTIONS
+        </span>
+        <svg
+          width="12" height="12" viewBox="0 0 12 12" fill="none"
+          style={{
+            color: 'var(--text-3)',
+            transform: open ? 'rotate(180deg)' : 'rotate(0deg)',
+            transition: 'transform 0.2s ease',
+          }}
+        >
+          <path d="M2 4l4 4 4-4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+        </svg>
+      </button>
+
+      {/* Pills — hidden when collapsed */}
+      {open && (
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
+          {SUGGESTED.map((s, i) => {
+            const Icon = s.icon;
+            return (
+              <button key={i}
+                onClick={() => onSend(s.promptFn(company.name))}
+                style={{
+                  display: 'inline-flex', alignItems: 'center', gap: 5,
+                  padding: '5px 11px', borderRadius: 20, cursor: 'pointer',
+                  border: '1px solid var(--border)',
+                  background: 'var(--bg-2)', color: 'var(--text-2)',
+                  fontSize: 12, fontWeight: 400,
+                  transition: 'all 0.15s',
+                }}
+                onMouseEnter={e => {
+                  e.currentTarget.style.background = 'var(--red-light)';
+                  e.currentTarget.style.color = 'var(--red-dark)';
+                  e.currentTarget.style.borderColor = 'var(--red-border)';
+                }}
+                onMouseLeave={e => {
+                  e.currentTarget.style.background = 'var(--bg-2)';
+                  e.currentTarget.style.color = 'var(--text-2)';
+                  e.currentTarget.style.borderColor = 'var(--border)';
+                }}
+              >
+                <Icon size={11}/>
+                {s.label}
+              </button>
+            );
+          })}
+        </div>
+      )}
     </div>
   );
 }
