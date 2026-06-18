@@ -352,7 +352,7 @@ export const kinoData = {
     },
   ],
   meetingPrep: {
-    snapshot: { industry: 'Consumer Goods — Personal Care & Food', group: 'Kino Group', segment: 'Commercial Banking', rm: 'Sari Puspita', lastMeeting: '3 Oct 2024' },
+    snapshot: { industry: 'Consumer Goods — Personal Care & Food', group: 'Kino Group', segment: 'Corporate Banking', rm: 'Sari Puspita', lastMeeting: '3 Oct 2024' },
     keyMetrics: [
       { label: 'CASA Balance', value: '+11.4% YoY', trend: 'up' },
       { label: 'Loan OS', value: '+4.2% YoY', trend: 'up' },
@@ -546,7 +546,7 @@ export const indofoodData = {
 // ⚠️  EcoWeb redirect URL — change this when EcoWeb goes live
 // Find this constant and replace the placeholder with the real URL.
 // ═══════════════════════════════════════════════════════════════════════════
-export const ECOWEB_URL = 'https://ecoweb.cimbniaga.co.id';
+export const ECOWEB_URL = 'https://aix-client.aip-cloudrun.mylab.local/aix-network-graph';
 
 export const ecosystemData = {
   astra: {
